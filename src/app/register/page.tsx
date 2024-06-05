@@ -1,43 +1,68 @@
 "use client";
-import { Box, Button, Container, Grid, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import Image from "next/image";
-import Link from "next/link";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { storeUserInfo } from "@/services/auth.services";
-import { toast } from "sonner";
-import { Router } from "next/router";
-import { useRouter } from "next/navigation";
 
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import Link from "next/link";
+import { useForm, SubmitHandler, FieldValues, useFormContext } from "react-hook-form";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { userLogin } from "@/services/actions/userLogin";
+import { storeUserInfo } from "@/services/auth.services";
 import CSForm from "@/components/Forms/CSForm";
 import CSInput from "@/components/Forms/CSInput";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import logo from "@/assets/search.png";
+import { registerUser } from "@/services/actions/registerUser";
 
-import logo from '@/assets/search.png'
-import { userLogin } from "@/services/actions/userLogin";
+
+
 
 export const validationSchema = z.object({
-  email: z.string().email("Please enter a valid email address!"),
   password: z.string().min(6, "Must be at least 6 characters"),
+  name: z.string().min(1, "Please enter your name!"),
+  email: z.string().email("Please enter a valid email address!"),
+  confirmPassword: z.string().min(6, {message: 'Password must be at least 6 characters'})
+}).refine((data) => data.password === data.confirmPassword, {
+  path: ['confirmPassword'],
+  message: 'Password and Confirm password does not match'
 });
 
-const LoginPage = () => {
-  const router = useRouter();
+export const defaultValues = {
+  password: "",
+  name: "",
+  email: "",
+  confirmPassword: "",
+};
 
-  const handleLogin = async (values: FieldValues) => {
-    // console.log(values);
+const RegisterPage = () => {
+  const router = useRouter();
+  
+
+  const handleRegister = async (values: FieldValues) => {
+    
+    // console.log(data);
     try {
-      const res = await userLogin(values);
-    //   console.log(res.data.token);
-      
-      if (res?.data?.token) {
+      const res = await registerUser(values);
+      // console.log(res);
+      if (res?.data?.id) {
         toast.success(res?.message);
-        storeUserInfo({ accessToken: res?.data?.token });
-        router.push("/");
-      } else {
-        // console.log(res);
-        toast.error(res.message)
+        const result = await userLogin({
+          password: values.password,
+          email: values.email,
+        });
+        if (result?.data?.token) {
+          storeUserInfo({ accessToken: result?.data?.token });
+          router.push("/");
+        }
       }
     } catch (err: any) {
       console.error(err.message);
@@ -74,42 +99,47 @@ const LoginPage = () => {
             </Box>
             <Box>
               <Typography variant="h6" fontWeight={600}>
-                Login here
+                Register Here
               </Typography>
             </Box>
           </Stack>
+
           <Box>
             <CSForm
-              onSubmit={handleLogin}
+              onSubmit={handleRegister}
               resolver={zodResolver(validationSchema)}
-              defaultValues={{
-                email: "",
-                password: "",
-              }}
+              defaultValues={defaultValues}
             >
               <Grid container spacing={2} my={1}>
-                <Grid item md={6}>
+                <Grid item md={12}>
+                  <CSInput label="Username" fullWidth={true} name="name" />
+                </Grid>
+                <Grid item md={12}>
                   <CSInput
-                    name="email"
                     label="Email"
                     type="email"
                     fullWidth={true}
+                    name="email"
                   />
                 </Grid>
                 <Grid item md={6}>
                   <CSInput
-                    name="password"
                     label="Password"
                     type="password"
                     fullWidth={true}
+                    name="password"
                   />
                 </Grid>
+                <Grid item md={6}>
+                  <CSInput
+                    label="Confirm Password"
+                    type="password"
+                    fullWidth={true}
+                    name="confirmPassword"
+                  />
+                </Grid>
+                
               </Grid>
-
-              <Typography mb={1} textAlign="end" component="p" fontWeight={300}>
-                Forgot Password?
-              </Typography>
-
               <Button
                 sx={{
                   margin: "10px 0px",
@@ -117,11 +147,10 @@ const LoginPage = () => {
                 fullWidth={true}
                 type="submit"
               >
-                Login
+                Register
               </Button>
               <Typography component="p" fontWeight={300}>
-                Don&apos;t have an account?{" "}
-                <Link href="/register" >Create an account</Link>
+                Do you already have an account? <Link href="/login">Login</Link>
               </Typography>
             </CSForm>
           </Box>
@@ -131,4 +160,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

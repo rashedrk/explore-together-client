@@ -10,6 +10,7 @@ type TInputProps = {
   sx?: SxProps;
   placeholder?: string;
   required?: boolean;
+  validate?: (value: string) => string | boolean;
 };
 
 const CSInput = ({
@@ -26,6 +27,7 @@ const CSInput = ({
     <Controller
       control={control}
       name={name}
+
       render={({ field, fieldState: { error } }) => (
         <TextField
           {...field}
@@ -38,7 +40,7 @@ const CSInput = ({
           placeholder={label}
           required={required}
           error={!!error?.message}
-          helperText={error?.message}
+          helperText={error ? error.message : ""}
         />
       )}
     />
