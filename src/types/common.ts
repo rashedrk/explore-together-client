@@ -25,3 +25,7 @@ export type IGenericErrorMessage = {
   path: string | number;
   message: string;
 };
+export type TQueryParams = {
+  name: string,
+  value: React.Key | string | string [] | boolean
+}

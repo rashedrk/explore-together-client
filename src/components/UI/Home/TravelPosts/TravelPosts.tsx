@@ -3,7 +3,7 @@ import { Box, Button, Container, Grid, Typography } from "@mui/material";
 
 const TravelPosts = async () => {
   const res = await fetch(
-    "https://travel-buddy-matching-server.vercel.app/api/trips"
+    "https://travel-buddy-matching-server.vercel.app/api/trips?limit=10"
   );
   const { data: trips } = await res.json();
   return (
@@ -12,9 +12,9 @@ const TravelPosts = async () => {
         Travel Posts
       </Typography>
       <Container>
-        <Grid container spacing={2}>
-          {trips.map((trip: any) => (
-            <Grid item key={trip.id} md={4}>
+        <Grid container justifyContent="center" spacing={2}>
+          {trips?.map((trip: any) => (
+            <Grid item key={trip.id} md={4} >
               <TravelCard trip={trip} />
             </Grid>
           ))}
