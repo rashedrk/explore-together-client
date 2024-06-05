@@ -16,6 +16,8 @@ axiosInstance.interceptors.request.use(
   function (config) {
     // Do something before request is sent
     const accessToken = getFromLocalStorage(authKey);
+  
+    
 
     if (accessToken) {
       config.headers.Authorization = accessToken;

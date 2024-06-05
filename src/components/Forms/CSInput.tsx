@@ -10,7 +10,7 @@ type TInputProps = {
   sx?: SxProps;
   placeholder?: string;
   required?: boolean;
-  validate?: (value: string) => string | boolean;
+  multiline?: boolean;
 };
 
 const CSInput = ({
@@ -21,13 +21,13 @@ const CSInput = ({
   fullWidth,
   sx,
   required,
+  multiline = false,
 }: TInputProps) => {
   const { control } = useFormContext();
   return (
     <Controller
       control={control}
       name={name}
-
       render={({ field, fieldState: { error } }) => (
         <TextField
           {...field}
@@ -39,6 +39,8 @@ const CSInput = ({
           fullWidth={fullWidth}
           placeholder={label}
           required={required}
+          multiline={multiline}
+          rows={multiline ? 4 : 1}
           error={!!error?.message}
           helperText={error ? error.message : ""}
         />
