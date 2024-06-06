@@ -11,6 +11,7 @@ type TInputProps = {
   placeholder?: string;
   required?: boolean;
   multiline?: boolean;
+  disabled?: boolean;
 };
 
 const CSInput = ({
@@ -22,6 +23,7 @@ const CSInput = ({
   sx,
   required,
   multiline = false,
+  disabled = false,
 }: TInputProps) => {
   const { control } = useFormContext();
   return (
@@ -41,6 +43,7 @@ const CSInput = ({
           required={required}
           multiline={multiline}
           rows={multiline ? 4 : 1}
+          disabled={disabled}
           error={!!error?.message}
           helperText={error ? error.message : ""}
         />
