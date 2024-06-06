@@ -1,7 +1,8 @@
+import { axiosBaseQuery } from '@/helpers/axios/axiosBaseQuery';
 import { USER_ROLE } from "@/constants/role";
 
 
-export type IMeta = {
+export type TMeta = {
   page: number;
   limit: number;
   total: number;
@@ -10,10 +11,20 @@ export type IMeta = {
 export type UserRole = keyof typeof USER_ROLE;
 
 
-export type ResponseSuccessType = {
-  data: any;
-  meta?: IMeta;
+export type ResponseSuccessType<T> = {
+  data: T;
+  meta?: TMeta;
 };
+
+export type TResponse<T> = {
+  data?: T,
+  error?: IGenericErrorResponse,
+  meta?: TMeta,
+  message: string,
+  success: boolean
+}
+
+export type TResponseRedux<T> = TResponse<T> & typeof axiosBaseQuery;
 
 export type IGenericErrorResponse = {
   statusCode: number;
@@ -27,5 +38,5 @@ export type IGenericErrorMessage = {
 };
 export type TQueryParams = {
   name: string,
-  value: React.Key | string | string [] | boolean
+  value: React.Key | string | string[] | boolean
 }

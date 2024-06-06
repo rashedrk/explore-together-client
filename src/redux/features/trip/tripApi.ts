@@ -1,5 +1,5 @@
 
-import { IMeta, TQueryParams } from '@/types/common';
+import { TMeta, TQueryParams, TResponseRedux } from '@/types/common';
 import { baseApi } from '../../api/baseApi';
 
 
@@ -19,7 +19,7 @@ export const tripApi = baseApi.injectEndpoints({
                     params: params
                 };
             },
-            transformResponse: (response:any) => {
+            transformResponse: (response: any) => {
                 return {
                     data: response.data,
                     meta: response.meta,
@@ -27,7 +27,18 @@ export const tripApi = baseApi.injectEndpoints({
             },
             providesTags: ["trips"],
         }),
+        getSingleTrip: build.query({
+            query: (id) => {
+                return {
+                    url: `/trips/${id}`,
+                    method: 'GET',
+                };
+            },
+            transformResponse: (response:TResponseRedux<TTrip> ) => {
+                return response.data;
+            },
+        }),
     }),
 });
 
-export const { useGetAllTripsQuery } = tripApi;
+export const { useGetAllTripsQuery, useGetSingleTripQuery } = tripApi;
