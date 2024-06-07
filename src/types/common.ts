@@ -1,5 +1,7 @@
 import { axiosBaseQuery } from '@/helpers/axios/axiosBaseQuery';
 import { USER_ROLE } from "@/constants/role";
+import { OverridableComponent } from '@mui/material/OverridableComponent';
+import { SvgIconTypeMap } from '@mui/material';
 
 
 export type TMeta = {
@@ -39,4 +41,12 @@ export type IGenericErrorMessage = {
 export type TQueryParams = {
   name: string,
   value: React.Key | string | string[] | boolean
+}
+
+export type DrawerItem =  {
+  title: string;
+  path: string;
+  parentPath?: string;
+  icon?: OverridableComponent<SvgIconTypeMap<{}, "svg">> & { muiName: string };
+  child?: DrawerItem[];
 }
