@@ -8,8 +8,10 @@ const TravelPosts = async () => {
   const { data: trips } = await res.json();
   return (
     <Box textAlign="center">
-      <Typography variant="h2" component="h4" gutterBottom>
-        Travel Posts
+      <Typography variant="h4" component="div" gutterBottom>
+        Travel <Box component="span" sx={{ color: "primary.main" }}>
+        Posts
+        </Box>
       </Typography>
       <Container>
         <Grid container justifyContent="center" spacing={2}>
