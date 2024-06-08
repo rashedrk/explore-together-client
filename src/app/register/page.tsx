@@ -26,26 +26,29 @@ import { registerUser } from "@/services/actions/registerUser";
 
 
 
-export const validationSchema = z.object({
-  password: z.string().min(6, "Must be at least 6 characters"),
-  name: z.string().min(1, "Please enter your name!"),
-  email: z.string().email("Please enter a valid email address!"),
-  confirmPassword: z.string().min(6, {message: 'Password must be at least 6 characters'})
-}).refine((data) => data.password === data.confirmPassword, {
-  path: ['confirmPassword'],
-  message: 'Password and Confirm password does not match'
-});
 
-export const defaultValues = {
-  password: "",
-  name: "",
-  email: "",
-  confirmPassword: "",
-};
+
+
 
 const RegisterPage = () => {
   const router = useRouter();
+
+  const validationSchema = z.object({
+    password: z.string().min(6, "Must be at least 6 characters"),
+    name: z.string().min(1, "Please enter your name!"),
+    email: z.string().email("Please enter a valid email address!"),
+    confirmPassword: z.string().min(6, {message: 'Password must be at least 6 characters'})
+  }).refine((data) => data.password === data.confirmPassword, {
+    path: ['confirmPassword'],
+    message: 'Password and Confirm password does not match'
+  });
   
+  const defaultValues = {
+    password: "",
+    name: "",
+    email: "",
+    confirmPassword: "",
+  };
 
   const handleRegister = async (values: FieldValues) => {
     

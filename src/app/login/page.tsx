@@ -17,12 +17,13 @@ import logo from '@/assets/search.png'
 import { userLogin } from "@/services/actions/userLogin";
 import setAccessToken from "@/services/actions/setCookie";
 
-export const validationSchema = z.object({
+
+const LoginPage = () => {
+  
+const validationSchema = z.object({
   email: z.string().email("Please enter a valid email address!"),
   password: z.string().min(6, "Must be at least 6 characters"),
 });
-
-const LoginPage = () => {
   const router = useRouter();
 
   const handleLogin = async (values: FieldValues) => {
