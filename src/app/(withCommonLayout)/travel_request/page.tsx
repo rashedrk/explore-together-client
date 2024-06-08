@@ -2,6 +2,8 @@
 
 import CSForm from "@/components/Forms/CSForm";
 import CSInput from "@/components/Forms/CSInput";
+import { useTripRequestMutation } from "@/redux/features/trip/tripApi";
+import { getUserInfo } from "@/services/auth.services";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Box,
@@ -12,12 +14,24 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
+import dayjs from "dayjs";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { FieldValues } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const TravelRequestPage = () => {
+  const router = useRouter()
+  const searchParams = useSearchParams();
   const [checked, setChecked] = useState(false);
+  const userData = getUserInfo();
+  const tripId = searchParams.get("tripId") || "";
+  const destination = searchParams.get("destination") || "";
+  const startDate = searchParams.get("startDate") || "";
+  const endDate = searchParams.get("endDate") || "";
+
+  const [requestTravel] = useTripRequestMutation();
 
   const validationSchema = z.object({
     name: z.string({ required_error: "Enter your name" }),
@@ -25,14 +39,32 @@ const TravelRequestPage = () => {
     reason: z.string({ required_error: "Please add additional information" }),
   });
   const defaultValues = {
-    destination: "Paris, London",
-    duration: "20/02/23 - 23/03/23",
-    name: "",
-    email: "",
+    destination: destination,
+    duration: `${dayjs(startDate).format("DD/MM/YYYY")} - ${dayjs(
+      endDate
+    ).format("DD/MM/YYYY")}`,
+    name: userData?.name,
+    email: userData?.email,
   };
-  const submitRequest = (values: FieldValues) => {
-    console.log(values);
+
+
+  const submitRequest = async(values: FieldValues) => {
+    const toastId = toast.loading('Requesting....')
+    const res = await requestTravel({
+      tripId,
+      userId: userData.id
+    });
+
+   if (res) {
+    toast.success("Request added successfully", {id: toastId});
+    router.push("/travel")
+   }
+   else {
+    toast.error("Something went wrong", {id: toastId})
+   }
+    
   };
+
   return (
     <Box
       sx={{
@@ -82,7 +114,7 @@ const TravelRequestPage = () => {
           sx={{
             backgroundColor: "white",
             color: "black",
-            maxWidth: 450,
+            maxWidth: 500,
             p: 2,
             zIndex: 3,
             boxShadow: "-1px 7px 36px 0px rgba(0,0,0,0.75)",

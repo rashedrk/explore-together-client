@@ -125,7 +125,7 @@ function Navbar() {
 
           {/* profile for mobile and Desktop  */}
           <Box sx={{ flexGrow: 0 }}>
-            <Button>Login</Button>
+            <Link href="/login"><Button>Login</Button></Link>
           </Box>
         </Toolbar>
       </Container>

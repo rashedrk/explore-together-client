@@ -64,7 +64,17 @@ export const tripApi = baseApi.injectEndpoints({
             },
             providesTags: ["my_trips"],
         }),
+        tripRequest: build.mutation({
+            query: (payload) => ({
+                url: `/trip/${payload.tripId}/request`,
+                method: 'POST',
+                data: {
+                    userId: payload.userId
+                },
+            }),
+            invalidatesTags: ["my_trips"],
+        }),
     }),
 });
 
-export const { useGetAllTripsQuery, useGetSingleTripQuery , useUpdateTripMutation, useRequestedTripsQuery , useMyTripPostsQuery} = tripApi;
+export const { useGetAllTripsQuery, useGetSingleTripQuery , useUpdateTripMutation, useRequestedTripsQuery , useMyTripPostsQuery, useTripRequestMutation} = tripApi;
