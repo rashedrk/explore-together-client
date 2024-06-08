@@ -36,7 +36,18 @@ export const userApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ["profile"],
         }),
+        changePassword: build.mutation({
+            query: (data: {
+                oldPassword: string,
+                newPassword: string
+            }) => ({
+                url: '/change-password',
+                method: 'PUT',
+                data,
+            }),
+        }),
+        
     }),
 });
 
-export const { useGetAllUsersQuery, useUpdateUserRoleStatusMutation, useGetProfileQuery, useUpdateProfileMutation } = userApi;
+export const { useGetAllUsersQuery, useUpdateUserRoleStatusMutation, useGetProfileQuery, useUpdateProfileMutation, useChangePasswordMutation } = userApi;
