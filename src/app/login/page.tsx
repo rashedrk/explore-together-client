@@ -15,6 +15,7 @@ import CSInput from "@/components/Forms/CSInput";
 
 import logo from '@/assets/search.png'
 import { userLogin } from "@/services/actions/userLogin";
+import setAccessToken from "@/services/actions/setCookie";
 
 export const validationSchema = z.object({
   email: z.string().email("Please enter a valid email address!"),
@@ -33,6 +34,7 @@ const LoginPage = () => {
       if (res?.data?.token) {
         toast.success(res?.message);
         storeUserInfo({ accessToken: res?.data?.token });
+        setAccessToken(res?.data?.token)
         router.push("/");
       } else {
         // console.log(res);

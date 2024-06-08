@@ -14,32 +14,15 @@ import Image from "next/image";
 import logo from "@/assets/logo.png";
 import Link from "next/link";
 import { useState } from "react";
+import { getUserInfo, removeUser } from "@/services/auth.services";
+import { useRouter } from "next/navigation";
 
 // const pages = ["Home", "About Us", "My Profile"];
-const pages = [
-  {
-    name: "Home",
-    route: '/'
-  },
-  {
-    name: "About Us",
-    route: '/about'
-  },
-  {
-    name: "My Profile",
-    route: '/profile'
-  }
-]
-
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Navbar() {
-  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(
-    null
-  );
-  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(
-    null
-  );
+  const router = useRouter();
+  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -56,12 +39,47 @@ function Navbar() {
     setAnchorElUser(null);
   };
 
+  const userData = getUserInfo();
+
+  const pages = [
+    {
+      name: "Home",
+      route: "/",
+    },
+    {
+      name: "About Us",
+      route: "/about",
+    },
+    userData ? {
+      name: "My Profile",
+      route: "/profile",
+    } : {
+      name: "",
+      route: "",
+    },
+  ];
+
+  const handleLogout = () => {
+    removeUser();
+    router.refresh();
+  };
+
   return (
-    <AppBar position="static" sx={{ color: "#333333", background: "white", border: 'none', boxShadow: "none" }}>
+    <AppBar
+      position="static"
+      sx={{
+        color: "#333333",
+        background: "white",
+        border: "none",
+        boxShadow: "none",
+      }}
+    >
       <Container maxWidth="lg">
         <Toolbar disableGutters>
           {/* Desktop logo and name  */}
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, flexGrow: 0.8 }}>
+          <Box
+            sx={{ display: { xs: "none", md: "flex" }, mr: 1, flexGrow: 0.8 }}
+          >
             <Image height={100} width={100} src={logo} alt="logo" />
           </Box>
 
@@ -125,7 +143,13 @@ function Navbar() {
 
           {/* profile for mobile and Desktop  */}
           <Box sx={{ flexGrow: 0 }}>
-            <Link href="/login"><Button>Login</Button></Link>
+            {userData ? (
+              <Button onClick={handleLogout}>Logout</Button>
+            ) : (
+              <Link href="/login">
+                <Button>Login</Button>
+              </Link>
+            )}
           </Box>
         </Toolbar>
       </Container>
