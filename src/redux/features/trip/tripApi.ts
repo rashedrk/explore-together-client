@@ -45,9 +45,26 @@ export const tripApi = baseApi.injectEndpoints({
                 method: 'PUT',
                 data: payload.data,
             }),
-            invalidatesTags: ["trips"],
+            invalidatesTags: ["trips", "my_trips"],
+        }),
+        requestedTrips: build.query({
+            query: () => {
+                return {
+                    url: "/travel-buddies/requested",
+                    method: 'GET',
+                };
+            },
+        }),
+        myTripPosts: build.query({
+            query: () => {
+                return {
+                    url: "/trips/my",
+                    method: 'GET',
+                };
+            },
+            providesTags: ["my_trips"],
         }),
     }),
 });
 
-export const { useGetAllTripsQuery, useGetSingleTripQuery , useUpdateTripMutation} = tripApi;
+export const { useGetAllTripsQuery, useGetSingleTripQuery , useUpdateTripMutation, useRequestedTripsQuery , useMyTripPostsQuery} = tripApi;

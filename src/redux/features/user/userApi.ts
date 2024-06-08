@@ -1,6 +1,6 @@
 import { baseApi } from '../../api/baseApi';
 
-export const tripApi = baseApi.injectEndpoints({
+export const userApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
         getAllUsers: build.query({
             query: () => {
@@ -19,7 +19,24 @@ export const tripApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ["users"],
         }),
+        getProfile: build.query({
+            query: () => {
+                return {
+                    url: '/profile',
+                    method: 'GET',
+                };
+            },
+            providesTags: ["profile"],
+        }),
+        updateProfile: build.mutation({
+            query: (data) => ({
+                url: `/profile`,
+                method: 'PUT',
+                data,
+            }),
+            invalidatesTags: ["profile"],
+        }),
     }),
 });
 
-export const { useGetAllUsersQuery, useUpdateUserRoleStatusMutation } = tripApi;
+export const { useGetAllUsersQuery, useUpdateUserRoleStatusMutation, useGetProfileQuery, useUpdateProfileMutation } = userApi;
