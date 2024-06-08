@@ -1,5 +1,5 @@
 "use client";
-import { useGetAllTripsQuery } from "@/redux/features/trip/tripApi";
+import { useGetAllTripsQuery, useUpdateTripMutation } from "@/redux/features/trip/tripApi";
 import { Box, IconButton, Pagination, Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useState } from "react";
@@ -7,7 +7,13 @@ import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import dayjs from "dayjs";
 import Image from "next/image";
+import EditTripModal from "./components/EditTripModal/EditTripModal";
+import { TTrip } from "@/types/trip";
 const TripManagementPage = () => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedTrip, setSelectedTrip] = useState(null);
+
+  const [updateTrip] = useUpdateTripMutation();
   const { data, isLoading } = useGetAllTripsQuery(undefined);
   //   console.log(data);
   const [page, setPage] = useState(1);
@@ -24,6 +30,15 @@ const TripManagementPage = () => {
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
+
+  const handleRemove = (id: string) => {
+    updateTrip({
+      id,
+      data: {
+        status: 'deactivated',
+      }
+    })
+  }
 
   const columns: GridColDef[] = [
     // {
@@ -64,10 +79,13 @@ const TripManagementPage = () => {
       renderCell: ({ row }) => {
         return (
           <>
-            <IconButton aria-label="delete">
+            <IconButton aria-label="delete" onClick={() => {
+              setIsModalOpen(true)
+              setSelectedTrip(row)
+              }}>
               <BorderColorOutlinedIcon color="primary" />
             </IconButton>
-            <IconButton aria-label="delete">
+            <IconButton aria-label="delete" onClick={() => handleRemove(row.id)}>
               <DeleteIcon sx={{ color: "red" }} />
             </IconButton>
           </>
@@ -78,6 +96,7 @@ const TripManagementPage = () => {
 
   return (
     <>
+    <EditTripModal trip={selectedTrip} open={isModalOpen} setOpen={setIsModalOpen}/>
       {isLoading ? (
         "Loading..."
       ) : (

@@ -67,8 +67,8 @@ const HeroSection = () => {
           Connect with like-minded travelers and make your journeys more exciting and memorable.
           </Typography>
 
-          <Link href="/trip">
-          <Button>Join Now</Button>
+          <Link href="/travel">
+          <Button>See Trips</Button>
           </Link>
         </Box>
       </Box>

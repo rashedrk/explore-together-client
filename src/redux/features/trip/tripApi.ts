@@ -1,6 +1,7 @@
 
 import { TMeta, TQueryParams, TResponseRedux } from '@/types/common';
 import { baseApi } from '../../api/baseApi';
+import { TTrip } from '@/types/trip';
 
 
 export const tripApi = baseApi.injectEndpoints({
@@ -34,11 +35,19 @@ export const tripApi = baseApi.injectEndpoints({
                     method: 'GET',
                 };
             },
-            transformResponse: (response:TResponseRedux<TTrip> ) => {
+            transformResponse: (response: TResponseRedux<TTrip>) => {
                 return response.data;
             },
+        }),
+        updateTrip: build.mutation({
+            query: (payload) => ({
+                url: `/trips/${payload.id}`,
+                method: 'PUT',
+                data: payload.data,
+            }),
+            invalidatesTags: ["trips"],
         }),
     }),
 });
 
-export const { useGetAllTripsQuery, useGetSingleTripQuery } = tripApi;
+export const { useGetAllTripsQuery, useGetSingleTripQuery , useUpdateTripMutation} = tripApi;

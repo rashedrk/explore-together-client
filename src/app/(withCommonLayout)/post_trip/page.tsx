@@ -5,6 +5,7 @@ import CSFileUploader from "@/components/Forms/CSFileUploader";
 import CSForm from "@/components/Forms/CSForm";
 import CSInput from "@/components/Forms/CSInput";
 import CSSelect from "@/components/Forms/CSSelect";
+import { tripType } from "@/constants/trip";
 import { postTrip } from "@/services/actions/postTrip";
 import { Button, Container, Grid, Typography } from "@mui/material";
 import { useState } from "react";
@@ -12,7 +13,7 @@ import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
 
 const PostTripPage = () => {
-  const tripType = ["adventure", "leisure", "business", "camping"];
+ 
 
   const handleSubmit = async (values: FieldValues) => {
     const toastId = toast.loading("Processing! Please wait....");
@@ -48,7 +49,7 @@ const PostTripPage = () => {
 
     try {
       const uploadedPhotos = await Promise.all(uploadPromises);
-      console.log(uploadedPhotos);
+      // console.log(uploadedPhotos);
 
       const tripData = {
         destination: values.destination,

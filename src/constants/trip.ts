@@ -1,0 +1,1 @@
+export const tripType = ["adventure", "leisure", "business", "camping"];

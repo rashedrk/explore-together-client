@@ -1,4 +1,4 @@
-type TTrip = {
+export type TTrip = {
     id: string
     userId: string
     destination: string
