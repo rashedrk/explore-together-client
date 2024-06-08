@@ -7,5 +7,5 @@ export const baseApi = createApi({
     reducerPath: "api",
     baseQuery: axiosBaseQuery({ baseUrl: "https://travel-buddy-matching-server.vercel.app/api" }),
     endpoints: () => ({}),
-    tagTypes: ["trips"],
+    tagTypes: ["trips", "users"],
 });

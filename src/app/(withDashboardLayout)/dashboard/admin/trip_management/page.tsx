@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import Image from "next/image";
 import EditTripModal from "./components/EditTripModal/EditTripModal";
 import { TTrip } from "@/types/trip";
+import Loader from "@/components/shared/Loader/Loader";
 const TripManagementPage = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedTrip, setSelectedTrip] = useState(null);
@@ -98,10 +99,9 @@ const TripManagementPage = () => {
     <>
     <EditTripModal trip={selectedTrip} open={isModalOpen} setOpen={setIsModalOpen}/>
       {isLoading ? (
-        "Loading..."
+        <Loader/>
       ) : (
         <DataGrid
-          loading={isLoading}
           rows={data?.data}
           columns={columns}
           hideFooterPagination

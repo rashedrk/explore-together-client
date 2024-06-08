@@ -1,5 +1,6 @@
 "use client";
 import TravelCard from "@/components/TravelCard/TravelCard";
+import Loader from "@/components/shared/Loader/Loader";
 import { useGetAllTripsQuery } from "@/redux/features/trip/tripApi";
 import { TQueryParams } from "@/types/common";
 import {
@@ -47,16 +48,7 @@ const TravelPage = () => {
       </Typography>
 
       {isLoading ? (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: 500,
-          }}
-        >
-          <CircularProgress />
-        </Box>
+        <Loader />
       ) : (
         <Grid container justifyContent="center" spacing={2}>
           {tripData?.data?.map((trip: any) => (
@@ -67,9 +59,14 @@ const TravelPage = () => {
         </Grid>
       )}
 
-      <Pagination  count={pageCount} page={page} onChange={handleChange}  sx={{
-        my: 3
-      }}/>
+      <Pagination
+        count={pageCount}
+        page={page}
+        onChange={handleChange}
+        sx={{
+          my: 3,
+        }}
+      />
     </Container>
   );
 };
