@@ -5,7 +5,7 @@ import { FieldValues } from "react-hook-form";
 export const postTrip = async (data: FieldValues) => {
     const accessToken = getFromLocalStorage(authKey);
     const res = await fetch(
-        'https://travel-buddy-matching-server.vercel.app/api/trips',
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/trips`,
         {
             method: "POST",
             headers: {

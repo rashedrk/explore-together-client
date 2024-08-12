@@ -8,7 +8,7 @@ type Role = keyof typeof roleBasedPrivateRoutes;
 const AuthRoutes = ['/login', '/register'];
 const commonPrivateRoutes = ['/dashboard', '/dashboard/change-password', '/post_trip', '/travel_request', '/profile'];
 const roleBasedPrivateRoutes = {
-   ADMIN: [/^\/dashboard\/admin/],
+   ADMIN: [/^\/dashboard\/admin\/?.*/],
 };
 
 export function middleware(request: NextRequest) {
@@ -39,6 +39,7 @@ export function middleware(request: NextRequest) {
 
    if (role && roleBasedPrivateRoutes[role as Role]) {
       const routes = roleBasedPrivateRoutes[role as Role];
+      console.log(`Role-based routes for role ${role}: ${routes}`);
       if (routes.some((route) => pathname.match(route))) {
          return NextResponse.next();
       }

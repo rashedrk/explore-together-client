@@ -2,7 +2,7 @@ import { FieldValues } from "react-hook-form";
 
 export const userLogin = async (data: FieldValues) => {
     const res = await fetch(
-        'https://travel-buddy-matching-server.vercel.app/api/login',
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/login`,
         {
             method: "POST",
             headers: {
