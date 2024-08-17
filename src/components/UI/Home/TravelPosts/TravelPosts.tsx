@@ -1,5 +1,6 @@
 import TravelCard from "@/components/TravelCard/TravelCard";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const TravelPosts = async () => {
   const res = await fetch(
@@ -33,10 +34,10 @@ const TravelPosts = async () => {
           <Button
             variant="outlined"
             sx={{
-              color: "#FF6F61",
+              color: "#0096FF",
             }}
           >
-            See More
+            All Travel Posts <ArrowForwardIcon fontSize="small" sx={{marginRight:0.5}}/>
           </Button>
         </Box>
       </Container>
