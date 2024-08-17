@@ -5,53 +5,89 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
-import { Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import Link from "next/link";
+import FmdGoodOutlinedIcon from "@mui/icons-material/FmdGoodOutlined";
+import ScheduleOutlinedIcon from "@mui/icons-material/ScheduleOutlined";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 
 const TravelCard = ({ trip }: any) => {
   return (
     <Card
       sx={{
-        maxWidth: 345,
+        maxWidth: 300,
         pb: 2,
         backgroundColor: "F5F5F5",
-        height: 400,
-        textAlign: "center",
+        height: 325,
+        textAlign: "left",
       }}
     >
-      <CardMedia
-        sx={{ height: 140 }}
-        image={trip.photos[0]}
-        title="green iguana"
-      />
+      <CardMedia sx={{ height: 150 }} image={trip.photos[0]} />
       <CardContent>
-        <Typography variant="h5" component="div">
-          {trip.destination}
-        </Typography>
-        <Typography gutterBottom variant="body1" color="text.secondary">
-          ({dayjs(trip?.startDate).format("DD/MM/YYYY")} -
-          {dayjs(trip?.endDate).format("DD/MM/YYYY")})
-        </Typography>
-        <Box
+        <Stack
+          justifyContent="space-between"
+          alignItems="center"
+          direction="row"
+        >
+          <Typography
+            variant="body2"
+            component="div"
+            color="text.secondary"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <FmdGoodOutlinedIcon sx={{ fontSize: 16, marginRight: 0.5 }} />
+            {trip.destination}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <ScheduleOutlinedIcon sx={{ fontSize: 16, marginRight: 0.5 }} />
+            {dayjs(trip?.endDate).diff(dayjs(trip?.startDate), "d")} days
+          </Typography>
+        </Stack>
+        <Typography
+          variant="body1"
+          marginTop={1}
           sx={{
-            height: 100,
+            fontWeight: 600,
+            fontSize: 18,
           }}
         >
-          <Typography variant="body2" gutterBottom color="text.secondary">
-            {trip.description.slice(0, 200)}...
-          </Typography>
-        </Box>
-      </CardContent>
-      <CardActions
-        sx={{
-          display: "flex",
-          justifyContent: "center",
+          {trip.title}
+        </Typography>
+
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            display: "-webkit-box",
+            WebkitLineClamp: "2",
+            WebkitBoxOrient: "vertical",
+          }}
+        >
+          {trip.description}
+        </Typography>
+        <Stack sx={{
+          marginTop: 1.5,
+          marginBottom: 1.5,
+          // textAlign: 'right'
         }}
-      >
-        <Link href={`/travel/${trip.id}`}>
-          <Button size="small">Details</Button>
-        </Link>
-      </CardActions>
+        >
+          <Link href={`/travel/${trip.id}`}>
+            <Button size="small">See More</Button>
+          </Link>
+        </Stack>
+      </CardContent>
     </Card>
   );
 };
