@@ -16,6 +16,7 @@ import CSInput from "@/components/Forms/CSInput";
 import logo from '@/assets/search.png'
 import { userLogin } from "@/services/actions/userLogin";
 import setAccessToken from "@/services/actions/setCookie";
+import DemoLoginModal from "@/components/Modals/DemoLoginModal";
 
 
 const LoginPage = () => {
@@ -33,16 +34,16 @@ const validationSchema = z.object({
     //   console.log(res.data.token);
       
       if (res?.data?.token) {
-        toast.success(res?.message);
         storeUserInfo({ accessToken: res?.data?.token });
         setAccessToken(res?.data?.token)
         router.push("/");
+        toast.success(res?.message , {duration: 3000});
       } else {
         // console.log(res);
-        toast.error(res.message)
+        toast.error(res.message, {duration: 3000})
       }
     } catch (err: any) {
-      console.error(err.message);
+      console.error(err.message, {duration: 3000});
     }
   };
 
@@ -57,7 +58,7 @@ const validationSchema = z.object({
       >
         <Box
           sx={{
-            maxWidth: 600,
+            maxWidth: 400,
             width: "100%",
             boxShadow: 1,
             borderRadius: 1,
@@ -90,7 +91,7 @@ const validationSchema = z.object({
               }}
             >
               <Grid container spacing={2} my={1}>
-                <Grid item md={6}>
+                <Grid item md={12}>
                   <CSInput
                     name="email"
                     label="Email"
@@ -98,7 +99,7 @@ const validationSchema = z.object({
                     fullWidth={true}
                   />
                 </Grid>
-                <Grid item md={6}>
+                <Grid item md={12}>
                   <CSInput
                     name="password"
                     label="Password"
@@ -108,9 +109,9 @@ const validationSchema = z.object({
                 </Grid>
               </Grid>
 
-              <Typography mb={1} textAlign="end" component="p" fontWeight={300}>
+              {/* <Typography mb={1} textAlign="end" component="p" fontWeight={300}>
                 Forgot Password?
-              </Typography>
+              </Typography> */}
 
               <Button
                 sx={{
@@ -127,6 +128,7 @@ const validationSchema = z.object({
               </Typography>
             </CSForm>
           </Box>
+          <DemoLoginModal handleLogin={handleLogin}/>
         </Box>
       </Stack>
     </Container>
