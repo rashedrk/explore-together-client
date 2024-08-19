@@ -19,7 +19,7 @@ const TravelPage = () => {
 
   const { data: tripData, isLoading } = useGetAllTripsQuery([
     { name: "page", value: page },
-    { name: "limit", value: 10 },
+    { name: "limit", value: 12 },
     ...params,
   ]);
 
@@ -54,7 +54,7 @@ const TravelPage = () => {
       ) : (
         <Grid container justifyContent="center" spacing={2}>
           {tripData?.data?.map((trip: any) => (
-            <Grid item key={trip.id} md={4}>
+            <Grid item key={trip.id} md={3}>
               <TravelCard trip={trip} />
             </Grid>
           ))}

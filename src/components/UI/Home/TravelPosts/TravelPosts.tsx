@@ -4,7 +4,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const TravelPosts = async () => {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/trips?limit=10`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/trips?limit=8`,
     { cache: "no-store" }
   );
   const { data: trips } = await res.json();
@@ -19,7 +19,7 @@ const TravelPosts = async () => {
       <Container>
         <Grid container justifyContent="center" spacing={2}>
           {trips?.map((trip: any) => (
-            <Grid item key={trip.id} md={4}>
+            <Grid item key={trip.id} md={3}>
               <TravelCard trip={trip} />
             </Grid>
           ))}
