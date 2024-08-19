@@ -1,6 +1,7 @@
 import TravelCard from "@/components/TravelCard/TravelCard";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import SectionTitle from "@/components/shared/SectionTitle/SectionTitle";
 
 const TravelPosts = async () => {
   const res = await fetch(
@@ -10,12 +11,13 @@ const TravelPosts = async () => {
   const { data: trips } = await res.json();
   return (
     <Box textAlign="center">
-      <Typography variant="h4" component="div" gutterBottom>
+      {/* <Typography variant="h4" component="div" gutterBottom>
         Travel{" "}
         <Box component="span" sx={{ color: "primary.main" }}>
           Posts
         </Box>
-      </Typography>
+      </Typography> */}
+      <SectionTitle title="Travel Posts" description="Find your all travel posts here"/>
       <Container>
         <Grid container justifyContent="center" spacing={2}>
           {trips?.map((trip: any) => (
