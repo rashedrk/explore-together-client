@@ -10,7 +10,7 @@ const SectionTitle = ({
   return (
     <>
       <Typography  sx={{
-        fontWeight: 800,
+        fontWeight: 700,
         color: '#011d30',
         fontSize: 25, 
         textTransform: 'uppercase'
