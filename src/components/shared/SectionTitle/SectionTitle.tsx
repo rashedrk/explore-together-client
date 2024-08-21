@@ -9,13 +9,19 @@ const SectionTitle = ({
 }) => {
   return (
     <>
-      <Typography  sx={{
-        fontWeight: 700,
-        color: '#011d30',
-        fontSize: 25, 
-        textTransform: 'uppercase'
-      }}>{title}</Typography>
-      <Typography variant="body2" color="text.secondary" marginBottom={3}>{description}</Typography>
+      <Typography
+        sx={{
+          fontWeight: 700,
+          color: "#113D48",
+          fontSize: 30,
+          textTransform: "uppercase",
+        }}
+      >
+        {title}
+      </Typography>
+      <Typography variant="body2" color="text.secondary" marginBottom={3}>
+        {description}
+      </Typography>
     </>
   );
 };
