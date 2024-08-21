@@ -1,0 +1,12 @@
+.img1{
+    border-radius: 100px 100px 0px;
+}
+
+.img2 {
+    border-radius: 100px 100px 100px 0px;
+}
+
+.img3 {
+    border-radius: 100px 0px 100px 100px;
+    margin-top: 10px;
+}
