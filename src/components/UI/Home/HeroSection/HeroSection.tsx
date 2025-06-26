@@ -16,7 +16,8 @@ const HeroSection = () => {
           position: "relative",
           height: "80vh",
           width: "100vw",
-          marginBottom: 10,
+          // marginBottom: 10,
+          marginBottom: 2,
         }}
       >
         {/* Background layer with overlay */}
@@ -81,7 +82,7 @@ const HeroSection = () => {
           </Link> */}
           </Box>
         </Box>
-        <Box
+        {/* <Box
           sx={{
             position: "absolute",
             bottom: -20,
@@ -103,7 +104,7 @@ const HeroSection = () => {
             }}
           />
           <Button>Search</Button>
-        </Box>
+        </Box> */}
       </Container>
     </>
   );

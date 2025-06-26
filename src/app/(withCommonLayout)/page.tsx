@@ -6,9 +6,9 @@ import TravelPosts from "@/components/UI/Home/TravelPosts/TravelPosts";
 const HomePage = () => {
     return (
         <div>
-            {/* <HeroSection/> */}
+            <HeroSection/>
             {/* <TopCategories/> */}
-            {/* <TravelPosts/> */}
+            <TravelPosts/>
             <PlanTrip/>
         </div>
     );
