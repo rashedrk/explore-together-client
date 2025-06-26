@@ -7,20 +7,18 @@ import {
   Typography,
   InputAdornment,
 } from "@mui/material";
-import Link from "next/link";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 
 const HeroSection = () => {
   return (
     <>
-      <Container
-        sx={{
+      <div
+        style={{
           position: "relative",
-          height: "80vh",
           width: "100vw",
-          // marginBottom: 10,
-          marginBottom: 8,
+          height: "65vh",
+          marginBottom: 60,
         }}
       >
         {/* Background layer with overlay */}
@@ -31,7 +29,7 @@ const HeroSection = () => {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundImage: `url('/assets/beach.jpg')`,
+            backgroundImage: `url('/assets/header.jpg')`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             "&:before": {
@@ -41,7 +39,7 @@ const HeroSection = () => {
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: "rgba(0, 0, 0, 0.3)", // Adjust the opacity value for desired darkness
+              backgroundColor: "rgba(0, 0, 0, 0.4)", // Adjust the opacity value for desired darkness
               zIndex: 1,
             },
           }}
@@ -61,28 +59,25 @@ const HeroSection = () => {
         >
           <Box
             sx={{
-              width: 600,
+              width: 700,
               textAlign: "center",
             }}
           >
             <Typography
               component="div"
-              variant="h4"
+              variant="h3"
               sx={{
                 fontWeight: 700,
+                marginBottom: 2,
                 textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)",
               }}
             >
-              Discover New Adventures with the Perfect Travel Buddy!
+              Explore the World Together 
             </Typography>
-            <Typography variant="body1" color={"white"} mb={2}>
-              Connect with like-minded travelers and make your journeys more
-              exciting and memorable.
+            <Typography variant="body1" color={"white"} mb={2} fontSize={18}>
+              Find your perfect travel companion and create unforgettable
+              memories around the globe
             </Typography>
-
-            {/* <Link href="/travel">
-          <Button>See Trips</Button>
-          </Link> */}
           </Box>
         </Box>
 
@@ -114,11 +109,7 @@ const HeroSection = () => {
               borderRight: "1px solid #e0e0e0",
             }}
           >
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              fontWeight={600}
-            >
+            <Typography variant="body2" color="text.secondary" fontWeight={600}>
               Location
             </Typography>
             <TextField
@@ -154,11 +145,7 @@ const HeroSection = () => {
               borderRight: "1px solid #e0e0e0",
             }}
           >
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              fontWeight={600}
-            >
+            <Typography variant="body2" color="text.secondary" fontWeight={600}>
               Date
             </Typography>
             <TextField
@@ -195,11 +182,7 @@ const HeroSection = () => {
               marginRight: 2,
             }}
           >
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              fontWeight={600}
-            >
+            <Typography variant="body2" color="text.secondary" fontWeight={600}>
               Check out
             </Typography>
             <TextField
@@ -242,7 +225,7 @@ const HeroSection = () => {
             Search
           </Button>
         </Paper>
-      </Container>
+      </div>
     </>
   );
 };
