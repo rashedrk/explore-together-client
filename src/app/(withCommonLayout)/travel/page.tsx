@@ -47,14 +47,12 @@ const TravelPage = () => {
         All Available Trip
       </Typography>
 
-      
-
       {isLoading ? (
         <Loader />
       ) : (
-        <Grid container justifyContent="center" spacing={2}>
+        <Grid container justifyContent="center" spacing={3}>
           {tripData?.data?.map((trip: any) => (
-            <Grid item key={trip.id} md={3}>
+            <Grid item key={trip.id} xs={12} sm={6} md={4}>
               <TravelCard trip={trip} />
             </Grid>
           ))}

@@ -1,6 +1,6 @@
 import TravelCard from "@/components/TravelCard/TravelCard";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import SectionTitle from "@/components/shared/SectionTitle/SectionTitle";
 
 const TravelPosts = async () => {
@@ -17,11 +17,14 @@ const TravelPosts = async () => {
           Posts
         </Box>
       </Typography> */}
-      <SectionTitle title="Travel Posts" description="Find your all travel posts here"/>
+      <SectionTitle
+        title="Travel Posts"
+        description="Find your all travel posts here"
+      />
       <Container>
-        <Grid container justifyContent="center" spacing={2}>
+        <Grid container justifyContent="center" spacing={3}>
           {trips?.map((trip: any) => (
-            <Grid item key={trip.id} md={3}>
+            <Grid item key={trip.id} xs={12} sm={6} md={4}>
               <TravelCard trip={trip} />
             </Grid>
           ))}
@@ -39,7 +42,8 @@ const TravelPosts = async () => {
               color: "#0096FF",
             }}
           >
-            All Travel Posts <ArrowForwardIcon fontSize="small" sx={{marginRight:0.5}}/>
+            All Travel Posts{" "}
+            <ArrowForwardIcon fontSize="small" sx={{ marginRight: 0.5 }} />
           </Button>
         </Box>
       </Container>
