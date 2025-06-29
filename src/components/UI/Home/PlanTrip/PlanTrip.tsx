@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import Image from "next/image";
 import "./planTrip.css";
 
@@ -7,7 +7,7 @@ import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import InsightsIcon from "@mui/icons-material/Insights";
 const PlanTrip = () => {
   return (
-    <div>
+    <Container>
       <Box
         display="grid"
         gridTemplateColumns="repeat(12, 1fr)"
@@ -137,7 +137,7 @@ const PlanTrip = () => {
           </Box>
         </Box>
       </Box>
-    </div>
+    </Container>
   );
 };
 
