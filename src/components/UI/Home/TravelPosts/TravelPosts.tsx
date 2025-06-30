@@ -2,6 +2,7 @@ import TravelCard from "@/components/TravelCard/TravelCard";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import SectionTitle from "@/components/shared/SectionTitle/SectionTitle";
+import Link from "next/link";
 
 const TravelPosts = async () => {
   const res = await fetch(
@@ -36,15 +37,17 @@ const TravelPosts = async () => {
             my: 5,
           }}
         >
-          <Button
-            variant="outlined"
-            sx={{
-              color: "#0096FF",
-            }}
-          >
-            All Travel Posts{" "}
-            <ArrowForwardIcon fontSize="small" sx={{ marginRight: 0.5 }} />
-          </Button>
+          <Link href="/travel">
+            <Button
+              variant="outlined"
+              sx={{
+                color: "#0096FF",
+              }}
+            >
+              All Travel Posts{" "}
+              <ArrowForwardIcon fontSize="small" sx={{ marginRight: 0.5 }} />
+            </Button>
+          </Link>
         </Box>
       </Container>
     </Box>
