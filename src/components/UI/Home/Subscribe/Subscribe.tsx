@@ -27,7 +27,7 @@ const Subscribe = () => {
       <Card
         sx={{
           display: "flex",
-          minHeight: 400,
+          minHeight: 350,
           borderRadius: 10,
           overflow: "hidden",
           boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
@@ -36,23 +36,23 @@ const Subscribe = () => {
         <CardMedia
           component="img"
           sx={{
-            width: "45%",
+            width: "50%",
             objectFit: "cover",
           }}
-          image="/assets/beach-2.jpg"
+          image="/assets/img-2.webp"
           alt="Tropical beach with seaplane"
         />
         <Box
           sx={{
-            width: "55%",
+            width: "50%",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            p: 4,
+            p: 3,
             textAlign: "center",
           }}
         >
-          <CardContent sx={{ flex: "1 0 auto", p: 5 }}>
+          <CardContent sx={{ flex: "1 0 auto", p: 4 }}>
             <Typography
               component="h2"
               variant="h4"
