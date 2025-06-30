@@ -75,7 +75,7 @@ const TravelCard = ({ trip }: any) => {
             position: "absolute",
             top: 8,
             right: 8,
-            backgroundColor: "rgba(255,255,255,0.9)",
+            // backgroundColor: "rgba(255,255,255,0.9)",
             backdropFilter: "blur(10px)",
             "&:hover": {
               backgroundColor: "rgba(255,255,255,1)",
@@ -123,7 +123,7 @@ const TravelCard = ({ trip }: any) => {
           variant="h6"
           sx={{
             fontWeight: 700,
-            fontSize: { xs: "18px", sm: "20px" },
+            fontSize: { xs: "16px", sm: "18px" },
             lineHeight: 1.3,
             marginBottom: 1.5,
             color: "#2c3e50",
@@ -132,9 +132,10 @@ const TravelCard = ({ trip }: any) => {
             display: "-webkit-box",
             WebkitLineClamp: "2",
             WebkitBoxOrient: "vertical",
+            textAlign: "left",
           }}
         >
-          {trip.title}
+          {trip.title || "Two Hour Walking Tour of Manhattan"}
         </Typography>
 
         {/* Rating and Reviews */}
@@ -142,7 +143,7 @@ const TravelCard = ({ trip }: any) => {
           direction="row"
           alignItems="center"
           spacing={1}
-          sx={{ marginBottom: 2 }}
+          sx={{ marginBottom: 3 }}
         >
           <Rating
             value={rating}
@@ -179,7 +180,7 @@ const TravelCard = ({ trip }: any) => {
                   fontSize: "12px",
                 }}
               >
-                €{originalPrice}.00
+                ${originalPrice}.00
               </Typography>
             )}
             <Typography
@@ -190,7 +191,7 @@ const TravelCard = ({ trip }: any) => {
                 color: "#2c3e50",
               }}
             >
-              From €{price}.00
+              From ${price}.00
             </Typography>
           </Box>
 
