@@ -189,9 +189,20 @@ const TravelCard = ({ trip }: any) => {
                 fontWeight: 700,
                 fontSize: { xs: "16px", sm: "18px" },
                 color: "#2c3e50",
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
               }}
             >
-              From ${price}.00
+              <Typography
+                component="span"
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontSize: "14px", fontWeight: 400 }}
+              >
+                From
+              </Typography>
+              ${price}.00
             </Typography>
           </Box>
 
