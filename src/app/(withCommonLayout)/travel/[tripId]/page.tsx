@@ -20,6 +20,13 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 import AppsIcon from "@mui/icons-material/Apps";
+import StarIcon from "@mui/icons-material/Star";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import TourIcon from "@mui/icons-material/Tour";
+import GroupIcon from "@mui/icons-material/Group";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import ShareIcon from "@mui/icons-material/Share";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import dayjs from "dayjs";
 import Link from "next/link";
 import React, { useState, useRef, useEffect } from "react";
@@ -444,55 +451,237 @@ const TripDetailsPage = ({ params }: TParams) => {
             )}
           </Box>
 
-          <Box sx={{ my: 2 }}>
-            <Typography variant="h5" mb={1}>
-              Description
+          {/* Rating Section */}
+          <Box
+            sx={{
+              mb: 4,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 2,
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                <StarIcon sx={{ color: "#FFD700", fontSize: 20 }} />
+                <Typography variant="h6" fontWeight="600">
+                  5
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  (3 Reviews)
+                </Typography>
+              </Box>
+              <Typography variant="body2" color="text.secondary">
+                •
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {data?.destination}
+              </Typography>
+            </Box>
+
+            {/* Action Buttons */}
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <IconButton
+                sx={{
+                  width: 48,
+                  height: 48,
+                  border: "1px solid #e0e0e0",
+                  borderRadius: "50%",
+                  backgroundColor: "white",
+                  "&:hover": {
+                    backgroundColor: "#f5f5f5",
+                    borderColor: "#d0d0d0",
+                  },
+                }}
+              >
+                <ShareIcon sx={{ fontSize: 20, color: "text.secondary" }} />
+              </IconButton>
+              <IconButton
+                sx={{
+                  width: 48,
+                  height: 48,
+                  border: "1px solid #e0e0e0",
+                  borderRadius: "50%",
+                  backgroundColor: "white",
+                  "&:hover": {
+                    backgroundColor: "#f5f5f5",
+                    borderColor: "#d0d0d0",
+                  },
+                }}
+              >
+                <FavoriteBorderIcon
+                  sx={{ fontSize: 20, color: "text.secondary" }}
+                />
+              </IconButton>
+            </Box>
+          </Box>
+
+          {/* Information Cards */}
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr 1fr",
+                md: "repeat(4, 1fr)",
+              },
+              gap: 2,
+              mb: 4,
+            }}
+          >
+            {/* Start Date Card */}
+            <Box
+              sx={{
+                border: "1px solid #e0e0e0",
+                borderRadius: "12px",
+                p: 2,
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+              }}
+            >
+              <CalendarTodayIcon sx={{ color: "#FF6B35", fontSize: 20 }} />
+              <Typography
+                variant="subtitle2"
+                fontWeight="600"
+                color="text.primary"
+              >
+                Start Date
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {dayjs(data?.startDate).format("MMM DD, YYYY")}
+              </Typography>
+            </Box>
+
+            {/* Duration Card */}
+            <Box
+              sx={{
+                border: "1px solid #e0e0e0",
+                borderRadius: "12px",
+                p: 2,
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+              }}
+            >
+              <AccessTimeIcon sx={{ color: "#4A90E2", fontSize: 20 }} />
+              <Typography
+                variant="subtitle2"
+                fontWeight="600"
+                color="text.primary"
+              >
+                Duration
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {dayjs(data?.endDate).diff(dayjs(data?.startDate), "day")} days
+              </Typography>
+            </Box>
+
+            {/* Tour Type Card */}
+            <Box
+              sx={{
+                border: "1px solid #e0e0e0",
+                borderRadius: "12px",
+                p: 2,
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+              }}
+            >
+              <TourIcon sx={{ color: "#8E44AD", fontSize: 20 }} />
+              <Typography
+                variant="subtitle2"
+                fontWeight="600"
+                color="text.primary"
+              >
+                Tour Type
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {data?.type}
+              </Typography>
+            </Box>
+
+            {/* Group Size Card */}
+            <Box
+              sx={{
+                border: "1px solid #e0e0e0",
+                borderRadius: "12px",
+                p: 2,
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+              }}
+            >
+              <GroupIcon sx={{ color: "#27AE60", fontSize: 20 }} />
+              <Typography
+                variant="subtitle2"
+                fontWeight="600"
+                color="text.primary"
+              >
+                Group Size
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                10 people
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* About this tour */}
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h5" fontWeight="600" mb={2}>
+              About this tour
             </Typography>
-            <Typography variant="body1" mb={1}>
+            <Typography variant="body1" color="text.secondary" lineHeight={1.7}>
               {data?.description}
             </Typography>
           </Box>
-          <Box sx={{ my: 2 }}>
-            <Typography variant="h5" mb={1}>
-              Activities
+
+          {/* Highlights */}
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h5" fontWeight="600" mb={2}>
+              Highlights
             </Typography>
-            <List>
-              {data?.activities.map((activity, index) => (
-                <Box key={index} component="span" sx={{ display: "flex" }}>
-                  <ListItemIcon>
-                    <CheckIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={activity} />
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+              {data?.activities?.map((activity, index) => (
+                <Box
+                  key={index}
+                  sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}
+                >
+                  <Box
+                    sx={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: "50%",
+                      backgroundColor: "#e8f5e8",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                      mt: 0.2,
+                    }}
+                  >
+                    <CheckIcon sx={{ fontSize: 12, color: "#4caf50" }} />
+                  </Box>
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    lineHeight={1.7}
+                  >
+                    {activity}
+                  </Typography>
                 </Box>
               ))}
-            </List>
+            </Box>
           </Box>
-          <Box sx={{ my: 2 }}>
-            <Typography variant="h5" mb={1}>
-              Duration
-            </Typography>
-            <Typography variant="body1" mb={1}>
-              {dayjs(data?.startDate).format("DD/MM/YYYY")} -{" "}
-              {dayjs(data?.endDate).format("DD/MM/YYYY")}
-            </Typography>
-          </Box>
-          <Box sx={{ my: 2 }}>
-            <Typography variant="h5" mb={1}>
-              Destination
-            </Typography>
-            <Typography variant="body1" mb={1}>
-              {data?.destination}
-            </Typography>
-          </Box>
-          <Box sx={{ my: 2 }}>
-            <Typography variant="h5" mb={1}>
-              Travel Type
-            </Typography>
-            <Typography variant="body1" mb={1}>
-              {data?.type}
-            </Typography>
-          </Box>
-          <Box sx={{ my: 2 }}>
+          <Box
+            sx={{
+              mt: 6,
+              mb: 4,
+              display: "flex",
+              justifyContent: "center",
+              pt: 4,
+              borderTop: "1px solid #f0f0f0",
+            }}
+          >
             <Link
               href={{
                 pathname: "/travel_request",
@@ -503,8 +692,31 @@ const TripDetailsPage = ({ params }: TParams) => {
                   endDate: data?.endDate,
                 },
               }}
+              style={{ textDecoration: "none" }}
             >
-              <Button>Request to Join</Button>
+              <Button
+                variant="contained"
+                size="large"
+                sx={{
+                  color: "white",
+                  fontWeight: "700",
+                  fontSize: "1.1rem",
+                  py: 2,
+                  px: 6,
+                  borderRadius: "30px",
+                  textTransform: "none",
+                  boxShadow: (theme) =>
+                    `0 8px 30px ${theme.palette.primary.main}40`,
+                  "&:hover": {
+                    transform: "translateY(-2px)",
+                    boxShadow: (theme) =>
+                      `0 12px 40px ${theme.palette.primary.main}60`,
+                  },
+                  transition: "all 0.3s ease",
+                }}
+              >
+                Request to Join This Adventure
+              </Button>
             </Link>
           </Box>
         </>
