@@ -22,8 +22,18 @@ import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 import AppsIcon from "@mui/icons-material/Apps";
 import dayjs from "dayjs";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+
+// Swiper imports
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, EffectCoverflow } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
+
+// Swiper styles
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/effect-coverflow";
 
 type TParams = {
   params: {
@@ -34,37 +44,39 @@ type TParams = {
 const TripDetailsPage = ({ params }: TParams) => {
   const id = params?.tripId;
   const { data, isLoading } = useGetSingleTripQuery(id);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
+  const [currentModalIndex, setCurrentModalIndex] = useState(0);
+  const swiperRef = useRef<SwiperType>();
 
   const totalPhotos = data?.photos?.length || 0;
 
-  const nextSlide = () => {
-    if (currentIndex + 3 < totalPhotos) {
-      setCurrentIndex(currentIndex + 1);
+  const goToNextImage = () => {
+    setCurrentModalIndex((prev) => (prev + 1) % totalPhotos);
+  };
+
+  const goToPrevImage = () => {
+    setCurrentModalIndex((prev) => (prev - 1 + totalPhotos) % totalPhotos);
+  };
+
+  const handleKeyPress = (event: KeyboardEvent) => {
+    if (!showAllPhotos) return;
+
+    if (event.key === "ArrowRight") {
+      goToNextImage();
+    } else if (event.key === "ArrowLeft") {
+      goToPrevImage();
+    } else if (event.key === "Escape") {
+      setShowAllPhotos(false);
     }
   };
 
-  const prevSlide = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
+  // Add keyboard event listeners
+  useEffect(() => {
+    if (showAllPhotos) {
+      document.addEventListener("keydown", handleKeyPress);
+      return () => document.removeEventListener("keydown", handleKeyPress);
     }
-  };
-
-  const getVisiblePhotos = () => {
-    if (!data?.photos) return [];
-    // Ensure we always show up to 3 photos if available
-    const endIndex = Math.min(currentIndex + 3, totalPhotos);
-    return data.photos.slice(currentIndex, endIndex);
-  };
-
-  const canGoNext = () => {
-    return currentIndex + 3 < totalPhotos;
-  };
-
-  const canGoPrev = () => {
-    return currentIndex > 0;
-  };
+  }, [showAllPhotos, currentModalIndex]);
 
   return (
     <Container>
@@ -78,32 +90,118 @@ const TripDetailsPage = ({ params }: TParams) => {
               sx={{
                 position: "relative",
                 height: { xs: 300, md: 400 },
-                display: "flex",
-                gap: 2,
-                overflow: "hidden",
                 borderRadius: "12px",
+                overflow: "hidden",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                "& .swiper": {
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "12px",
+                  display: "flex",
+                  alignItems: "center",
+                },
+                "& .swiper-wrapper": {
+                  alignItems: "center",
+                  display: "flex",
+                },
+                "& .swiper-slide": {
+                  transition: "all 0.3s ease",
+                  transform: "scale(0.75)",
+                  opacity: 0.6,
+                  filter: "brightness(0.7)",
+                  width: "auto !important",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+                "& .swiper-slide-active": {
+                  transform: "scale(1)",
+                  opacity: 1,
+                  filter: "brightness(1)",
+                  zIndex: 2,
+                },
+                "& .swiper-slide-next, & .swiper-slide-prev": {
+                  transform: "scale(0.85)",
+                  opacity: 0.8,
+                  filter: "brightness(0.85)",
+                },
+                "& .swiper-button-next, & .swiper-button-prev": {
+                  width: "48px",
+                  height: "48px",
+                  backgroundColor: "rgba(255, 255, 255, 0.9)",
+                  borderRadius: "50%",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                  "&:after": {
+                    fontSize: "20px",
+                    color: "#000",
+                    fontWeight: "bold",
+                  },
+                  "&:hover": {
+                    backgroundColor: "rgba(255, 255, 255, 1)",
+                  },
+                },
+                "& .swiper-button-prev": {
+                  left: "16px",
+                },
+                "& .swiper-button-next": {
+                  right: "16px",
+                },
+                "& .swiper-pagination": {
+                  bottom: "16px",
+                  "& .swiper-pagination-bullet": {
+                    backgroundColor: "rgba(255, 255, 255, 0.5)",
+                    opacity: 1,
+                  },
+                  "& .swiper-pagination-bullet-active": {
+                    backgroundColor: "white",
+                  },
+                },
               }}
             >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentIndex}
-                  initial={{ opacity: 0, x: 100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
-                  style={{
-                    display: "flex",
-                    gap: "8px",
-                    width: "100%",
-                    height: "100%",
-                  }}
-                >
-                  {getVisiblePhotos().map((photo: string, index: number) => (
+              <Swiper
+                modules={[Navigation, Pagination]}
+                spaceBetween={20}
+                slidesPerView="auto"
+                centeredSlides={true}
+                centerInsufficientSlides={true}
+                initialSlide={0}
+                breakpoints={{
+                  320: {
+                    slidesPerView: 1.5,
+                    spaceBetween: 15,
+                  },
+                  640: {
+                    slidesPerView: 2.1,
+                    spaceBetween: 20,
+                  },
+                  768: {
+                    slidesPerView: 2.5,
+                    spaceBetween: 25,
+                  },
+                  1024: {
+                    slidesPerView: 2.8,
+                    spaceBetween: 30,
+                  },
+                }}
+                navigation
+                pagination={{ clickable: true }}
+                onSwiper={(swiper) => {
+                  swiperRef.current = swiper;
+                }}
+                loop={totalPhotos > 2}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
+                {data?.photos?.map((photo: string, index: number) => (
+                  <SwiperSlide key={index}>
                     <Box
-                      key={currentIndex + index}
                       sx={{
                         position: "relative",
-                        flex: 1,
+                        width: { xs: "280px", md: "350px", lg: "400px" },
                         height: "100%",
                         borderRadius: "12px",
                         overflow: "hidden",
@@ -114,194 +212,8 @@ const TripDetailsPage = ({ params }: TParams) => {
                         },
                       }}
                       onClick={() => {
-                        setCurrentIndex(currentIndex + index);
+                        setCurrentModalIndex(index);
                         setShowAllPhotos(true);
-                      }}
-                    >
-                      <Image
-                        src={photo}
-                        alt={`Trip photo ${currentIndex + index + 1}`}
-                        fill
-                        style={{
-                          objectFit: "cover",
-                        }}
-                      />
-                    </Box>
-                  ))}
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Custom Navigation Buttons */}
-              {canGoPrev() && (
-                <IconButton
-                  onClick={prevSlide}
-                  sx={{
-                    position: "absolute",
-                    left: 16,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    zIndex: 10,
-                    backgroundColor: "rgba(255, 255, 255, 0.9)",
-                    "&:hover": {
-                      backgroundColor: "rgba(255, 255, 255, 1)",
-                    },
-                    width: 48,
-                    height: 48,
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                  }}
-                >
-                  <ArrowBackIosIcon />
-                </IconButton>
-              )}
-
-              {canGoNext() && (
-                <IconButton
-                  onClick={nextSlide}
-                  sx={{
-                    position: "absolute",
-                    right: 16,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    zIndex: 10,
-                    backgroundColor: "rgba(255, 255, 255, 0.9)",
-                    "&:hover": {
-                      backgroundColor: "rgba(255, 255, 255, 1)",
-                    },
-                    width: 48,
-                    height: 48,
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                  }}
-                >
-                  <ArrowForwardIosIcon />
-                </IconButton>
-              )}
-
-              {/* Photo Counter */}
-              <Chip
-                label={`${Math.min(
-                  currentIndex + 2,
-                  totalPhotos
-                )} / ${totalPhotos}`}
-                sx={{
-                  position: "absolute",
-                  bottom: 16,
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  zIndex: 10,
-                  backgroundColor: "rgba(0, 0, 0, 0.85)",
-                  color: "white",
-                  fontWeight: "600",
-                  fontSize: "0.875rem",
-                  backdropFilter: "blur(8px)",
-                  borderRadius: "20px",
-                  px: 2,
-                  py: 0.5,
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                }}
-              />
-
-              {/* All Photos Button */}
-              <Button
-                variant="contained"
-                startIcon={<AppsIcon sx={{ fontSize: 18 }} />}
-                onClick={() => setShowAllPhotos(true)}
-                sx={{
-                  position: "absolute",
-                  bottom: 16,
-                  right: 16,
-                  zIndex: 10,
-                  backgroundColor: "rgba(255, 255, 255, 0.95)",
-                  color: "rgba(0, 0, 0, 0.8)",
-                  backdropFilter: "blur(10px)",
-                  borderRadius: "25px",
-                  px: 3,
-                  py: 1,
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  textTransform: "none",
-                  border: "1px solid rgba(0, 0, 0, 0.1)",
-                  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
-                  "&:hover": {
-                    backgroundColor: "rgba(255, 255, 255, 1)",
-                    color: "rgba(0, 0, 0, 0.9)",
-                    transform: "translateY(-1px)",
-                    boxShadow: "0 6px 25px rgba(0, 0, 0, 0.2)",
-                  },
-                  transition: "all 0.2s ease-in-out",
-                }}
-              >
-                All photos
-              </Button>
-            </Box>
-
-            {/* Photo Grid Modal */}
-            {showAllPhotos && (
-              <Box
-                sx={{
-                  position: "fixed",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: "rgba(0, 0, 0, 0.9)",
-                  zIndex: 1300,
-                  display: "flex",
-                  flexDirection: "column",
-                  padding: 2,
-                  overflow: "auto",
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    mb: 2,
-                  }}
-                >
-                  <Typography variant="h6" color="white">
-                    All Photos ({totalPhotos})
-                  </Typography>
-                  <Button
-                    variant="outlined"
-                    color="inherit"
-                    onClick={() => setShowAllPhotos(false)}
-                    sx={{ color: "white", borderColor: "white" }}
-                  >
-                    Close
-                  </Button>
-                </Box>
-                <Box
-                  sx={{
-                    display: "grid",
-                    gridTemplateColumns: {
-                      xs: "1fr",
-                      sm: "repeat(2, 1fr)",
-                      md: "repeat(3, 1fr)",
-                      lg: "repeat(4, 1fr)",
-                    },
-                    gap: 2,
-                    maxWidth: 1200,
-                    margin: "0 auto",
-                  }}
-                >
-                  {data?.photos?.map((photo: string, index: number) => (
-                    <Box
-                      key={index}
-                      sx={{
-                        position: "relative",
-                        aspectRatio: "1",
-                        borderRadius: "8px",
-                        overflow: "hidden",
-                        cursor: "pointer",
-                        "&:hover": {
-                          transform: "scale(1.02)",
-                          transition: "transform 0.2s ease-in-out",
-                        },
-                      }}
-                      onClick={() => {
-                        setCurrentIndex(Math.max(0, index - 1));
-                        setShowAllPhotos(false);
                       }}
                     >
                       <Image
@@ -313,6 +225,219 @@ const TripDetailsPage = ({ params }: TParams) => {
                         }}
                       />
                     </Box>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+
+              {/* All Photos Button */}
+              <Chip
+                label="All photos"
+                icon={<AppsIcon sx={{ fontSize: 18 }} />}
+                onClick={() => {
+                  setCurrentModalIndex(0);
+                  setShowAllPhotos(true);
+                }}
+                sx={{
+                  position: "absolute",
+                  bottom: 16,
+                  right: 16,
+                  zIndex: 10,
+                  backgroundColor: "rgba(255, 255, 255, 0.95)",
+                  color: "rgba(0, 0, 0, 0.8)",
+                  backdropFilter: "blur(10px)",
+                  borderRadius: "25px",
+                  px: 1,
+                  py: 0.5,
+                  fontSize: "0.875rem",
+                  fontWeight: "600",
+                  border: "1px solid rgba(0, 0, 0, 0.1)",
+                  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
+                  cursor: "pointer",
+                  "&:hover": {
+                    backgroundColor: "rgba(255, 255, 255, 1)",
+                    color: "rgba(0, 0, 0, 0.9)",
+                    transform: "translateY(-1px)",
+                    boxShadow: "0 6px 25px rgba(0, 0, 0, 0.2)",
+                  },
+                  transition: "all 0.2s ease-in-out",
+                  "& .MuiChip-label": {
+                    fontWeight: "600",
+                    fontSize: "0.875rem",
+                  },
+                }}
+              />
+            </Box>
+
+            {/* Photo Carousel Modal */}
+            {showAllPhotos && data?.photos && data.photos.length > 0 && (
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: "rgba(0, 0, 0, 0.95)",
+                  zIndex: 9999,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {/* Header */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    p: 3,
+                    background:
+                      "linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)",
+                    zIndex: 10,
+                  }}
+                >
+                  <Typography variant="h6" color="white">
+                    {currentModalIndex + 1} / {totalPhotos}
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    color="inherit"
+                    onClick={() => setShowAllPhotos(false)}
+                    sx={{
+                      color: "white",
+                      borderColor: "white",
+                      "&:hover": {
+                        backgroundColor: "rgba(255, 255, 255, 0.1)",
+                      },
+                    }}
+                  >
+                    Close
+                  </Button>
+                </Box>
+
+                {/* Main Image Container */}
+                <Box
+                  sx={{
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    px: 8,
+                  }}
+                >
+                  {/* Previous Button */}
+                  <IconButton
+                    onClick={goToPrevImage}
+                    sx={{
+                      position: "absolute",
+                      left: 24,
+                      zIndex: 10,
+                      backgroundColor: "rgba(255, 255, 255, 0.1)",
+                      color: "white",
+                      width: 56,
+                      height: 56,
+                      "&:hover": {
+                        backgroundColor: "rgba(255, 255, 255, 0.2)",
+                      },
+                    }}
+                    disabled={totalPhotos <= 1}
+                  >
+                    <ArrowBackIosIcon sx={{ fontSize: 24 }} />
+                  </IconButton>
+
+                  {/* Image */}
+                  <Box
+                    sx={{
+                      position: "relative",
+                      maxWidth: "80%",
+                      maxHeight: "80%",
+                      width: "fit-content",
+                      height: "fit-content",
+                      borderRadius: "8px",
+                      overflow: "hidden",
+                      boxShadow: "0 20px 60px rgba(0, 0, 0, 0.8)",
+                    }}
+                  >
+                    <Image
+                      src={data.photos[currentModalIndex]}
+                      alt={`Trip photo ${currentModalIndex + 1}`}
+                      width={1200}
+                      height={800}
+                      style={{
+                        width: "auto",
+                        height: "auto",
+                        maxWidth: "80vw",
+                        maxHeight: "80vh",
+                        objectFit: "contain",
+                      }}
+                    />
+                  </Box>
+
+                  {/* Next Button */}
+                  <IconButton
+                    onClick={goToNextImage}
+                    sx={{
+                      position: "absolute",
+                      right: 24,
+                      zIndex: 10,
+                      backgroundColor: "rgba(255, 255, 255, 0.1)",
+                      color: "white",
+                      width: 56,
+                      height: 56,
+                      "&:hover": {
+                        backgroundColor: "rgba(255, 255, 255, 0.2)",
+                      },
+                    }}
+                    disabled={totalPhotos <= 1}
+                  >
+                    <ArrowForwardIosIcon sx={{ fontSize: 24 }} />
+                  </IconButton>
+                </Box>
+
+                {/* Bottom indicators */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    bottom: 24,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    display: "flex",
+                    gap: 1,
+                    backgroundColor: "rgba(0, 0, 0, 0.6)",
+                    borderRadius: "20px",
+                    px: 2,
+                    py: 1,
+                  }}
+                >
+                  {data.photos.map((_, index) => (
+                    <Box
+                      key={index}
+                      onClick={() => setCurrentModalIndex(index)}
+                      sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: "50%",
+                        backgroundColor:
+                          index === currentModalIndex
+                            ? "white"
+                            : "rgba(255, 255, 255, 0.4)",
+                        cursor: "pointer",
+                        transition: "all 0.2s ease",
+                        "&:hover": {
+                          backgroundColor:
+                            index === currentModalIndex
+                              ? "white"
+                              : "rgba(255, 255, 255, 0.7)",
+                        },
+                      }}
+                    />
                   ))}
                 </Box>
               </Box>
