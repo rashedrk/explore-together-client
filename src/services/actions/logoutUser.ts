@@ -1,11 +1,28 @@
+'use server';
 
 import { authKey } from '@/constants/authkey';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
-export const logoutUser = (router: AppRouterInstance) => {
-   localStorage.removeItem(authKey);
+export const logoutUser = async () => {
+   // Clear the cookie
    cookies().delete(authKey);
-   router.push('/');
-   router.refresh();
+
+   // Redirect to home page
+   redirect('/');
+};
+
+// Client-side function to clear localStorage and call server action
+export const logoutUserComplete = async () => {
+   // Clear localStorage
+   if (typeof window !== 'undefined') {
+      localStorage.removeItem(authKey);
+   }
+
+   // Call server action to clear cookie
+   await logoutUser();
+};
+
+export const clearAuthCookie = async () => {
+   cookies().delete(authKey);
 };

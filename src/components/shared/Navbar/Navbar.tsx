@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { getUserInfo, removeUser } from "@/services/auth.services";
 import { useRouter } from "next/navigation";
+import { clearAuthCookie } from "@/services/actions/logoutUser";
 
 // const pages = ["Home", "About Us", "My Profile"];
 
@@ -64,8 +65,13 @@ function Navbar() {
         },
   ];
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    // Clear localStorage
     removeUser();
+    // Clear cookie
+    await clearAuthCookie();
+    // Refresh the page
+    router.refresh();
   };
 
   return (
@@ -260,10 +266,7 @@ function Navbar() {
           <Box sx={{ flexGrow: 0 }}>
             {userData ? (
               <Button
-                onClick={() => {
-                  handleLogout();
-                  // router.refresh();
-                }}
+                onClick={handleLogout}
                 sx={{
                   borderRadius: "8px",
                   textTransform: "none",
