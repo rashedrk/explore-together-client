@@ -9,6 +9,13 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
+import Avatar from "@mui/material/Avatar";
+import Tooltip from "@mui/material/Tooltip";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Divider from "@mui/material/Divider";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import PersonIcon from "@mui/icons-material/Person";
+import LogoutIcon from "@mui/icons-material/Logout";
 import Image from "next/image";
 import logo from "@/assets/logo.png";
 import Link from "next/link";
@@ -299,26 +306,130 @@ function Navbar() {
           {/* profile for mobile and Desktop  */}
           <Box sx={{ flexGrow: 0 }}>
             {userData ? (
-              <Button
-                onClick={handleLogout}
-                sx={{
-                  borderRadius: "8px",
-                  textTransform: "none",
-                  fontWeight: 600,
-                  px: 3,
-                  py: 1,
-                  background: "linear-gradient(135deg, #ff6b6b, #ee5a52)",
-                  color: "white",
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    background: "linear-gradient(135deg, #ee5a52, #dc4c64)",
-                    transform: "translateY(-2px)",
-                    boxShadow: "0 4px 20px rgba(238, 90, 82, 0.4)",
-                  },
-                }}
-              >
-                Logout
-              </Button>
+              <>
+                <Tooltip title="Account settings">
+                  <IconButton
+                    onClick={handleOpenUserMenu}
+                    sx={{
+                      p: 0,
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        transform: "scale(1.1)",
+                      },
+                    }}
+                  >
+                    <Avatar
+                      src={
+                        userData?.profileImage ||
+                        userData?.avatar ||
+                        "/assets/default-avatar.png"
+                      }
+                      alt={userData?.name || "User"}
+                      sx={{
+                        bgcolor: "#1CA8CB",
+                        width: 40,
+                        height: 40,
+                        fontSize: "1.1rem",
+                        fontWeight: 600,
+                        border: "2px solid rgba(28, 168, 203, 0.2)",
+                        transition: "all 0.3s ease",
+                        "&:hover": {
+                          border: "2px solid #1CA8CB",
+                          boxShadow: "0 4px 20px rgba(28, 168, 203, 0.4)",
+                        },
+                      }}
+                    >
+                      {userData?.name?.charAt(0)?.toUpperCase() || "U"}
+                    </Avatar>
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{
+                    mt: "45px",
+                    "& .MuiPaper-root": {
+                      borderRadius: "12px",
+                      background: "rgba(255, 255, 255, 0.95)",
+                      backdropFilter: "blur(20px)",
+                      boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)",
+                      border: "1px solid rgba(255, 255, 255, 0.2)",
+                      minWidth: "180px",
+                    },
+                  }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  <MenuItem
+                    onClick={handleCloseUserMenu}
+                    component={Link}
+                    href="/dashboard"
+                    sx={{
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        backgroundColor: "rgba(28, 168, 203, 0.1)",
+                        transform: "translateX(4px)",
+                      },
+                    }}
+                  >
+                    <ListItemIcon>
+                      <DashboardIcon sx={{ color: "#1CA8CB" }} />
+                    </ListItemIcon>
+                    <Typography sx={{ color: "#113D48", fontWeight: 500 }}>
+                      Dashboard
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={handleCloseUserMenu}
+                    component={Link}
+                    href="/profile"
+                    sx={{
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        backgroundColor: "rgba(28, 168, 203, 0.1)",
+                        transform: "translateX(4px)",
+                      },
+                    }}
+                  >
+                    <ListItemIcon>
+                      <PersonIcon sx={{ color: "#1CA8CB" }} />
+                    </ListItemIcon>
+                    <Typography sx={{ color: "#113D48", fontWeight: 500 }}>
+                      Profile
+                    </Typography>
+                  </MenuItem>
+                  <Divider sx={{ my: 1 }} />
+                  <MenuItem
+                    onClick={() => {
+                      handleCloseUserMenu();
+                      handleLogout();
+                    }}
+                    sx={{
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        backgroundColor: "rgba(238, 90, 82, 0.1)",
+                        transform: "translateX(4px)",
+                      },
+                    }}
+                  >
+                    <ListItemIcon>
+                      <LogoutIcon sx={{ color: "#ee5a52" }} />
+                    </ListItemIcon>
+                    <Typography sx={{ color: "#ee5a52", fontWeight: 500 }}>
+                      Logout
+                    </Typography>
+                  </MenuItem>
+                </Menu>
+              </>
             ) : (
               <Link href="/login" style={{ textDecoration: "none" }}>
                 <Button
