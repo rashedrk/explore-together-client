@@ -27,7 +27,8 @@ const Subscribe = () => {
       <Card
         sx={{
           display: "flex",
-          minHeight: 350,
+          flexDirection: { xs: "column", md: "row" },
+          minHeight: { xs: "auto", md: 350 },
           borderRadius: 10,
           overflow: "hidden",
           boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
@@ -36,7 +37,8 @@ const Subscribe = () => {
         <CardMedia
           component="img"
           sx={{
-            width: "50%",
+            width: { xs: "100%", md: "50%" },
+            height: { xs: 250, md: "auto" },
             objectFit: "cover",
           }}
           image="/assets/img-2.webp"
@@ -44,15 +46,15 @@ const Subscribe = () => {
         />
         <Box
           sx={{
-            width: "50%",
+            width: { xs: "100%", md: "50%" },
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            p: 3,
+            p: { xs: 2, sm: 3 },
             textAlign: "center",
           }}
         >
-          <CardContent sx={{ flex: "1 0 auto", p: 4 }}>
+          <CardContent sx={{ flex: "1 0 auto", p: { xs: 2, sm: 4 } }}>
             <Typography
               component="h2"
               variant="h4"
@@ -61,6 +63,7 @@ const Subscribe = () => {
                 mb: 2,
                 color: "#2d3748",
                 lineHeight: 1.2,
+                fontSize: { xs: "1.5rem", sm: "2rem", md: "2.125rem" },
               }}
             >
               Get special offers, and more from Traveler
@@ -70,19 +73,31 @@ const Subscribe = () => {
               sx={{
                 color: "#718096",
                 mb: 4,
-                fontSize: "1.1rem",
+                fontSize: { xs: "1rem", md: "1.1rem" },
                 lineHeight: 1.5,
               }}
             >
               Subscribe to see secret deals prices drop the moment you sign up!
             </Typography>
-            <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                gap: 2,
+                alignItems: "center",
+              }}
+            >
               <TextField
                 fullWidth
                 variant="outlined"
                 placeholder="Email Address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: { xs: 2, sm: 1 },
+                  },
+                }}
               />
               <Button
                 variant="contained"
@@ -95,7 +110,7 @@ const Subscribe = () => {
                   fontWeight: "600",
                   fontSize: "1rem",
                   textTransform: "none",
-                  minWidth: "140px",
+                  minWidth: { xs: "100%", sm: "140px" },
                   boxShadow: "0 4px 12px rgba(66, 153, 225, 0.3)",
                 }}
               >

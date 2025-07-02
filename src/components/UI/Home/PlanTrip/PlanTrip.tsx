@@ -10,13 +10,13 @@ const PlanTrip = () => {
     <Container>
       <Box
         display="grid"
-        gridTemplateColumns="repeat(12, 1fr)"
+        gridTemplateColumns={{ xs: "1fr", md: "repeat(12, 1fr)" }}
         alignItems="center"
         justifyContent="center"
-        gap={2}
+        gap={{ xs: 4, md: 2 }}
         sx={{ paddingY: 5 }}
       >
-        <Box gridColumn="span 6" justifySelf='center'>
+        <Box gridColumn={{ xs: "1", md: "span 6" }} justifySelf="center">
           <Box display="flex" gap={2}>
             <Image
               src="https://wordpress.themeholy.com/tourm/wp-content/uploads/2024/06/about_1_1.jpg"
@@ -43,7 +43,7 @@ const PlanTrip = () => {
             </Box>
           </Box>
         </Box>
-        <Box gridColumn="span 6" textAlign="left">
+        <Box gridColumn={{ xs: "1", md: "span 6" }} textAlign="justify">
           <Typography
             sx={{
               fontWeight: 700,
@@ -53,7 +53,12 @@ const PlanTrip = () => {
           >
             Plan Your Trip With us
           </Typography>
-          <Typography variant="body2" color="text.secondary" marginBottom={3} textAlign="justify">
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            marginBottom={3}
+            textAlign="justify"
+          >
             Whether you are embarking on a solo adventure or looking for the
             perfect travel companion, Travel Buddy is here to make your journey
             unforgettable. With our easy-to-use platform, you can:
@@ -78,7 +83,11 @@ const PlanTrip = () => {
                 <Typography variant="h6" color="secondary.main">
                   Post Your Travel Plans
                 </Typography>
-                <Typography variant="body2" color="text.secondary" textAlign="justify">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  textAlign="justify"
+                >
                   Share your itinerary, destination, and travel dates. Whether
                   its a weekend getaway or a months-long expedition
                 </Typography>
@@ -103,7 +112,11 @@ const PlanTrip = () => {
                 <Typography variant="h6" color="secondary.main">
                   Find Like-minded Travelers
                 </Typography>
-                <Typography variant="body2" color="text.secondary" textAlign="justify">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  textAlign="justify"
+                >
                   Browse through other travelers plans and find someone who
                   shares your interests and schedule.
                 </Typography>
@@ -128,7 +141,11 @@ const PlanTrip = () => {
                 <Typography variant="h6" color="secondary.main">
                   Personalize Your Adventure
                 </Typography>
-                <Typography variant="body2" color="text.secondary" textAlign="justify">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  textAlign="justify"
+                >
                   Tailor your trip by finding companions who share your passion
                   for specific activities, be it hiking, cultural exploration.
                 </Typography>
