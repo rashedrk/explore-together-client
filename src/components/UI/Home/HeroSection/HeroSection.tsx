@@ -109,7 +109,7 @@ const HeroSection = () => {
             bottom: { xs: -160, sm: -120, md: -80, lg: -30 },
             left: "50%",
             transform: "translateX(-50%)",
-            zIndex: 10000,
+            zIndex: 999,
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
             alignItems: { xs: "stretch", md: "center" },

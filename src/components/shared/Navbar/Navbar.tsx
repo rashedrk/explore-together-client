@@ -19,7 +19,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import Image from "next/image";
 import logo from "@/assets/logo.png";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getUserInfo, removeUser } from "@/services/auth.services";
 import { useRouter, usePathname } from "next/navigation";
 import { clearAuthCookie } from "@/services/actions/logoutUser";
@@ -31,6 +31,14 @@ function Navbar() {
   const pathname = usePathname();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+  const [userData, setUserData] = useState<any>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    const user = getUserInfo();
+    setUserData(user);
+  }, []);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -47,8 +55,6 @@ function Navbar() {
     setAnchorElUser(null);
   };
 
-  const userData = getUserInfo();
-
   const pages = [
     {
       name: "Home",
@@ -62,7 +68,7 @@ function Navbar() {
       name: "About Us",
       route: "/about",
     },
-    ...(userData
+    ...(isClient && userData
       ? [
           {
             name: "My Profile",
@@ -77,6 +83,8 @@ function Navbar() {
     removeUser();
     // Clear cookie
     await clearAuthCookie();
+    // Update state
+    setUserData(null);
     // Refresh the page
     router.refresh();
   };
@@ -102,6 +110,7 @@ function Navbar() {
         borderBottom: "none",
         boxShadow: "none",
         transition: "all 0.3s ease-in-out",
+        zIndex: 9999,
       }}
     >
       <Container maxWidth="lg">
@@ -305,7 +314,7 @@ function Navbar() {
 
           {/* profile for mobile and Desktop  */}
           <Box sx={{ flexGrow: 0 }}>
-            {userData ? (
+            {isClient && userData ? (
               <>
                 <Tooltip title="Account settings">
                   <IconButton
@@ -430,7 +439,7 @@ function Navbar() {
                   </MenuItem>
                 </Menu>
               </>
-            ) : (
+            ) : isClient ? (
               <Link href="/login" style={{ textDecoration: "none" }}>
                 <Button
                   sx={{
@@ -451,7 +460,7 @@ function Navbar() {
                   Login
                 </Button>
               </Link>
-            )}
+            ) : null}
           </Box>
         </Toolbar>
       </Container>
