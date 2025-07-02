@@ -14,13 +14,14 @@ import logo from "@/assets/logo.png";
 import Link from "next/link";
 import { useState } from "react";
 import { getUserInfo, removeUser } from "@/services/auth.services";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { clearAuthCookie } from "@/services/actions/logoutUser";
 
 // const pages = ["Home", "About Us", "My Profile"];
 
 function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -54,15 +55,14 @@ function Navbar() {
       name: "About Us",
       route: "/about",
     },
-    userData
-      ? {
-          name: "My Profile",
-          route: "/profile",
-        }
-      : {
-          name: "",
-          route: "",
-        },
+    ...(userData
+      ? [
+          {
+            name: "My Profile",
+            route: "/profile",
+          },
+        ]
+      : []),
   ];
 
   const handleLogout = async () => {
@@ -72,6 +72,18 @@ function Navbar() {
     await clearAuthCookie();
     // Refresh the page
     router.refresh();
+  };
+
+  const isActivePage = (route: string) => {
+    // Handle empty or invalid routes
+    if (!route || route === "") {
+      return false;
+    }
+
+    if (route === "/") {
+      return pathname === "/";
+    }
+    return pathname.startsWith(route);
   };
 
   return (
@@ -159,31 +171,41 @@ function Navbar() {
                 },
               }}
             >
-              {pages.map((page, index) => (
-                <MenuItem
-                  key={index}
-                  onClick={handleCloseNavMenu}
-                  component={Link}
-                  href={page.route}
-                  sx={{
-                    transition: "all 0.3s ease",
-                    "&:hover": {
-                      backgroundColor: "rgba(28, 168, 203, 0.1)",
-                      transform: "translateX(8px)",
-                    },
-                  }}
-                >
-                  <Typography
-                    textAlign="center"
+              {pages.map((page, index) => {
+                const isActive = isActivePage(page.route);
+                return (
+                  <MenuItem
+                    key={index}
+                    onClick={handleCloseNavMenu}
+                    component={Link}
+                    href={page.route}
                     sx={{
-                      fontWeight: 500,
-                      color: "#113D48",
+                      backgroundColor: isActive
+                        ? "rgba(28, 168, 203, 0.1)"
+                        : "transparent",
+                      borderLeft: isActive
+                        ? "3px solid #1CA8CB"
+                        : "3px solid transparent",
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        backgroundColor: "rgba(28, 168, 203, 0.1)",
+                        transform: "translateX(8px)",
+                        borderLeft: "3px solid #1CA8CB",
+                      },
                     }}
                   >
-                    {page.name}
-                  </Typography>
-                </MenuItem>
-              ))}
+                    <Typography
+                      textAlign="center"
+                      sx={{
+                        fontWeight: isActive ? 600 : 500,
+                        color: isActive ? "#1CA8CB" : "#113D48",
+                      }}
+                    >
+                      {page.name}
+                    </Typography>
+                  </MenuItem>
+                );
+              })}
             </Menu>
           </Box>
 
@@ -217,49 +239,61 @@ function Navbar() {
           <Box
             sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, gap: 1 }}
           >
-            {pages.map((page, index) => (
-              <Typography
-                key={index}
-                onClick={handleCloseNavMenu}
-                sx={{
-                  my: 2,
-                  color: "#113D48",
-                  display: "block",
-                  mx: 2,
-                  fontWeight: 500,
-                  fontSize: "16px",
-                  position: "relative",
-                  textDecoration: "none",
-                  padding: "8px 16px",
-                  borderRadius: "8px",
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    color: "#1CA8CB",
-                    backgroundColor: "rgba(28, 168, 203, 0.1)",
-                    transform: "translateY(-2px)",
-                  },
-                  "&::after": {
-                    content: '""',
-                    position: "absolute",
-                    bottom: "4px",
-                    left: "50%",
-                    transform: "translateX(-50%) scaleX(0)",
-                    width: "80%",
-                    height: "2px",
-                    backgroundColor: "#1CA8CB",
-                    borderRadius: "1px",
-                    transition: "transform 0.3s ease",
-                  },
-                  "&:hover::after": {
-                    transform: "translateX(-50%) scaleX(1)",
-                  },
-                }}
-                component={Link}
-                href={page.route}
-              >
-                {page.name}
-              </Typography>
-            ))}
+            {pages.map((page, index) => {
+              const isActive = isActivePage(page.route);
+              return (
+                <Typography
+                  key={index}
+                  onClick={handleCloseNavMenu}
+                  sx={{
+                    my: 2,
+                    color: isActive ? "#1CA8CB" : "#113D48",
+                    display: "block",
+                    mx: 2,
+                    fontWeight: isActive ? 600 : 500,
+                    fontSize: "16px",
+                    position: "relative",
+                    textDecoration: "none",
+                    padding: "8px 16px",
+                    borderRadius: "8px",
+                    backgroundColor: isActive
+                      ? "rgba(28, 168, 203, 0.1)"
+                      : "transparent",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      color: "#1CA8CB",
+                      backgroundColor: "rgba(28, 168, 203, 0.1)",
+                      transform: "translateY(-2px)",
+                    },
+                    "&::after": {
+                      ...(isActive
+                        ? {}
+                        : {
+                            content: '""',
+                            position: "absolute",
+                            bottom: "4px",
+                            left: "50%",
+                            transform: `translateX(-50%) scaleX(${
+                              isActive ? 1 : 0
+                            })`,
+                            width: "80%",
+                            height: "2px",
+                            backgroundColor: "#1CA8CB",
+                            borderRadius: "1px",
+                            transition: "transform 0.3s ease",
+                          }),
+                    },
+                    "&:hover::after": {
+                      transform: "translateX(-50%) scaleX(1)",
+                    },
+                  }}
+                  component={Link}
+                  href={page.route}
+                >
+                  {page.name}
+                </Typography>
+              );
+            })}
           </Box>
 
           {/* profile for mobile and Desktop  */}
