@@ -24,7 +24,7 @@ const DemoLoginModal = ({handleLogin} : any) => {
     {
       role: "User",
       email: "user@user.com",
-      password: "test123",
+      password: "user123",
     },
   ];
 
@@ -68,7 +68,7 @@ const DemoLoginModal = ({handleLogin} : any) => {
           <GridCloseIcon />
         </IconButton>
         <DialogContent dividers sx={{
-            width: 400
+            width: { xs: '95vw', sm: 500 }
         }}>
           {credentials.map((credential) => (
             <Stack key={credential.role} direction="row" justifyContent="space-between" alignItems="center" marginBottom={1}>
