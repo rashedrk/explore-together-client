@@ -9,10 +9,24 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { Avatar, Badge, Stack, Tooltip } from "@mui/material";
+import {
+  Avatar,
+  Menu,
+  MenuItem,
+  Stack,
+  Tooltip,
+  ListItemIcon,
+  Divider,
+} from "@mui/material";
+import PersonIcon from "@mui/icons-material/Person";
+import LogoutIcon from "@mui/icons-material/Logout";
+import Link from "next/link";
 
 import SideBar from "../Sidebar/Sidebar";
-import LogoutIcon from "@mui/icons-material/Logout";
+import { getUserInfo, removeUser } from "@/services/auth.services";
+import { clearAuthCookie } from "@/services/actions/logoutUser";
+import { useRouter } from "next/navigation";
+import { Home } from "@mui/icons-material";
 
 const drawerWidth = 240;
 
@@ -21,8 +35,20 @@ export default function DashboardDrawer({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
+  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
+    null
+  );
+  const [userData, setUserData] = React.useState<any>(null);
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+    const user = getUserInfo();
+    setUserData(user);
+  }, []);
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -39,6 +65,25 @@ export default function DashboardDrawer({
     }
   };
 
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  const handleLogout = async () => {
+    // Clear localStorage
+    removeUser();
+    // Clear cookie
+    await clearAuthCookie();
+    // Update state
+    setUserData(null);
+    // Refresh the page
+    router.refresh();
+  };
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -47,20 +92,30 @@ export default function DashboardDrawer({
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
-          background: "White",
-          boxShadow: 0,
-          borderBottom: "1px solid #ddd",
+          background: "rgba(255, 255, 255, 0.9)",
+          backdropFilter: "blur(20px)",
+          boxShadow: "0 2px 20px rgba(0, 0, 0, 0.05)",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
         }}
       >
-        <Toolbar>
+        <Toolbar sx={{ minHeight: "72px" }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
+            sx={{
+              mr: 2,
+              display: { sm: "none" },
+              color: "#1CA8CB",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                backgroundColor: "rgba(28, 168, 203, 0.1)",
+                transform: "scale(1.1)",
+              },
+            }}
           >
-            <MenuIcon sx={{ color: "primary.main" }} />
+            <MenuIcon />
           </IconButton>
           <Box
             sx={{
@@ -71,25 +126,161 @@ export default function DashboardDrawer({
             }}
           >
             <Box>
-
               <Typography
-                variant="h6"
+                variant="h5"
                 noWrap
                 component="div"
-                sx={{ color: "primary.main", fontWeight: 600 }}
+                sx={{
+                  color: "#113D48",
+                  fontWeight: 700,
+                  letterSpacing: "-0.5px",
+                  background:
+                    "linear-gradient(135deg, #113D48 0%, #1CA8CB 100%)",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
               >
-                Welcome to Dashboard
+                Dashboard
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "rgba(17, 61, 72, 0.6)",
+                  fontWeight: 400,
+                  fontSize: "0.875rem",
+                }}
+              >
+                Welcome back, {userData?.name || "User"}
               </Typography>
             </Box>
-            <Stack direction="row" gap={3}>
-              <Tooltip title="Log Out">
-                <IconButton sx={{ background: "#ffffff" }}>
-                  <LogoutIcon color="action" />
-                </IconButton>
-              </Tooltip>
-
-              {/* <Avatar alt={data?.name} src={data?.profilePhoto} />
-              <AccountMenu /> */}
+            <Stack direction="row" gap={2}>
+              {isClient && userData ? (
+                <>
+                  <Tooltip title="Account settings">
+                    <IconButton
+                      onClick={handleOpenUserMenu}
+                      sx={{
+                        p: 0,
+                        transition: "all 0.3s ease",
+                        "&:hover": {
+                          transform: "scale(1.1)",
+                        },
+                      }}
+                    >
+                      <Avatar
+                        src={
+                          userData?.profileImage ||
+                          userData?.avatar ||
+                          "/assets/default-avatar.png"
+                        }
+                        alt={userData?.name || "User"}
+                        sx={{
+                          bgcolor: "#1CA8CB",
+                          width: 44,
+                          height: 44,
+                          fontSize: "1.1rem",
+                          fontWeight: 600,
+                          border: "2px solid rgba(28, 168, 203, 0.2)",
+                          transition: "all 0.3s ease",
+                          "&:hover": {
+                            border: "2px solid #1CA8CB",
+                            boxShadow: "0 4px 20px rgba(28, 168, 203, 0.4)",
+                          },
+                        }}
+                      >
+                        {userData?.name?.charAt(0)?.toUpperCase() || "U"}
+                      </Avatar>
+                    </IconButton>
+                  </Tooltip>
+                  <Menu
+                    sx={{
+                      mt: "45px",
+                      "& .MuiPaper-root": {
+                        borderRadius: "12px",
+                        background: "rgba(255, 255, 255, 0.95)",
+                        backdropFilter: "blur(20px)",
+                        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)",
+                        border: "1px solid rgba(255, 255, 255, 0.2)",
+                        minWidth: "180px",
+                      },
+                    }}
+                    id="menu-appbar"
+                    anchorEl={anchorElUser}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    open={Boolean(anchorElUser)}
+                    onClose={handleCloseUserMenu}
+                  >
+                    <MenuItem
+                      onClick={handleCloseUserMenu}
+                      component={Link}
+                      href="/"
+                      sx={{
+                        transition: "all 0.3s ease",
+                        "&:hover": {
+                          backgroundColor: "rgba(28, 168, 203, 0.1)",
+                          transform: "translateX(4px)",
+                        },
+                      }}
+                    >
+                      <ListItemIcon>
+                        <Home sx={{ color: "#1CA8CB" }} />
+                      </ListItemIcon>
+                      <Typography sx={{ color: "#113D48", fontWeight: 500 }}>
+                        Home
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={handleCloseUserMenu}
+                      component={Link}
+                      href="/profile"
+                      sx={{
+                        transition: "all 0.3s ease",
+                        "&:hover": {
+                          backgroundColor: "rgba(28, 168, 203, 0.1)",
+                          transform: "translateX(4px)",
+                        },
+                      }}
+                    >
+                      <ListItemIcon>
+                        <PersonIcon sx={{ color: "#1CA8CB" }} />
+                      </ListItemIcon>
+                      <Typography sx={{ color: "#113D48", fontWeight: 500 }}>
+                        Profile
+                      </Typography>
+                    </MenuItem>
+                    <Divider sx={{ my: 1 }} />
+                    <MenuItem
+                      onClick={() => {
+                        handleCloseUserMenu();
+                        handleLogout();
+                      }}
+                      sx={{
+                        transition: "all 0.3s ease",
+                        "&:hover": {
+                          backgroundColor: "rgba(238, 90, 82, 0.1)",
+                          transform: "translateX(4px)",
+                        },
+                      }}
+                    >
+                      <ListItemIcon>
+                        <LogoutIcon sx={{ color: "#ee5a52" }} />
+                      </ListItemIcon>
+                      <Typography sx={{ color: "#ee5a52", fontWeight: 500 }}>
+                        Logout
+                      </Typography>
+                    </MenuItem>
+                  </Menu>
+                </>
+              ) : null}
             </Stack>
           </Box>
         </Toolbar>

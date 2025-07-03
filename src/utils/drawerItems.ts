@@ -1,23 +1,34 @@
 
+
 import { DrawerItem, UserRole } from '@/types/common';
 import { USER_ROLE } from '@/constants/role';
-
+import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
-import HomeIcon from '@mui/icons-material/Home';
+import { Add } from '@mui/icons-material';
+
 
 export const drawerItems = (role: UserRole): DrawerItem[] => {
    const roleMenus: DrawerItem[] = [];
 
+   // Common/Shared items for all users
+   const sharedItems: DrawerItem[] = [
+      {
+         title: 'Dashboard',
+         path: '',
+         icon: DashboardIcon,
+      },
+      {
+         title: 'Post Trip',          
+         path: 'post_trip',
+         icon: Add,
+      }
+   ];
 
    switch (role) {
       case USER_ROLE.ADMIN:
          roleMenus.push(
-            {
-               title: 'Home',
-               path: `/`,
-               icon: HomeIcon,
-            },
+            ...sharedItems,
             {
                title: 'User management',
                path: `${role}/user_management`,
@@ -29,6 +40,9 @@ export const drawerItems = (role: UserRole): DrawerItem[] => {
                icon: TravelExploreIcon,
             },
          );
+         break;
+      case USER_ROLE.USER:
+         roleMenus.push(...sharedItems);
          break;
 
       default:

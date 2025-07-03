@@ -248,20 +248,16 @@ const DashboardPage = () => {
   );
 
   return (
-    <Box sx={{ flexGrow: 1, p: { xs: 2, md: 3 } }}>
+    <Box sx={{ flexGrow: 1, p: { xs: 2, md: 3 }, pt: 0}}>
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
+      <Box sx={{ mb: 2 }}>
         <Typography
-          variant="h4"
+          variant="h5"
           gutterBottom
           fontWeight="bold"
-          color="primary.main"
+          // color="primary.main"
         >
-          Dashboard Overview
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Welcome back! Here&apos;s what&apos;s happening with your travel
-          platform.
+          Overview
         </Typography>
       </Box>
 
