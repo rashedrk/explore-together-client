@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Grid,
@@ -36,13 +36,21 @@ import {
   AttachMoney,
   PersonAdd,
   FlightTakeoff,
+  Person,
+  PendingActions,
+  CheckCircle,
 } from "@mui/icons-material";
-import { useGetAllTripsQuery } from "@/redux/features/trip/tripApi";
+import {
+  useGetAllTripsQuery,
+  useMyTripPostsQuery,
+} from "@/redux/features/trip/tripApi";
 import { useGetAllUsersQuery } from "@/redux/features/user/userApi";
 import Loader from "@/components/shared/Loader/Loader";
 import Link from "next/link";
 import dayjs from "dayjs";
 import { TTrip } from "@/types/trip";
+import { getUserInfo } from "@/services/auth.services";
+import { USER_ROLE } from "@/constants/role";
 
 interface User {
   id: string;
@@ -53,16 +61,53 @@ interface User {
 }
 
 const DashboardPage = () => {
-  const { data: tripsData, isLoading: tripsLoading } = useGetAllTripsQuery([]);
-  const { data: usersData, isLoading: usersLoading } =
-    useGetAllUsersQuery(undefined);
+  const [userInfo, setUserInfo] = useState<any>(null);
+  const [isClient, setIsClient] = useState(false);
 
-  if (tripsLoading || usersLoading) {
+  useEffect(() => {
+    setIsClient(true);
+    const user = getUserInfo();
+    setUserInfo(user);
+  }, []);
+
+  // Conditional queries based on user role
+  const { data: allTripsData, isLoading: allTripsLoading } =
+    useGetAllTripsQuery([], {
+      skip: !userInfo || userInfo.role !== USER_ROLE.ADMIN,
+    });
+
+  const { data: myTripsData, isLoading: myTripsLoading } = useMyTripPostsQuery(
+    undefined,
+    {
+      skip: !userInfo || userInfo.role !== USER_ROLE.USER,
+    }
+  );
+
+  const { data: usersData, isLoading: usersLoading } = useGetAllUsersQuery(
+    undefined,
+    {
+      skip: !userInfo || userInfo.role !== USER_ROLE.ADMIN,
+    }
+  );
+
+  if (!isClient || !userInfo) {
     return <Loader />;
   }
 
-  const trips = tripsData?.data || [];
-  const users = usersData?.data || [];
+  const isAdmin = userInfo.role === USER_ROLE.ADMIN;
+  const isUser = userInfo.role === USER_ROLE.USER;
+
+  // Handle loading states
+  if (
+    (isAdmin && (allTripsLoading || usersLoading)) ||
+    (isUser && myTripsLoading)
+  ) {
+    return <Loader />;
+  }
+
+  // Get appropriate trips data based on role
+  const trips = isAdmin ? allTripsData?.data || [] : myTripsData?.data || [];
+  const users = isAdmin ? usersData?.data || [] : [];
 
   // Calculate statistics
   const totalTrips = trips.length;
@@ -248,32 +293,31 @@ const DashboardPage = () => {
   );
 
   return (
-    <Box sx={{ flexGrow: 1, p: { xs: 2, md: 3 }, pt: 0}}>
+    <Box sx={{ flexGrow: 1, p: { xs: 2, md: 3 }, pt: 0 }}>
       {/* Header */}
       <Box sx={{ mb: 2 }}>
-        <Typography
-          variant="h5"
-          gutterBottom
-          fontWeight="bold"
-          // color="primary.main"
-        >
-          Overview
+        <Typography variant="h5" gutterBottom fontWeight="bold">
+          {isAdmin ? "Admin Dashboard" : "My Dashboard"}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Welcome back, {userInfo.name}! Here&apos;s your{" "}
+          {isAdmin ? "platform" : "personal"} overview.
         </Typography>
       </Box>
 
       {/* Statistics Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} lg={3}>
+        <Grid item xs={12} sm={6} lg={isAdmin ? 3 : 4}>
           <StatCard
-            title="Total Trips"
+            title={isAdmin ? "Total Trips" : "My Trips"}
             value={totalTrips}
-            subtitle="All time trips"
+            subtitle={isAdmin ? "All time trips" : "Created by you"}
             icon={TravelExplore}
             color="#1976d2"
             trend={12}
           />
         </Grid>
-        <Grid item xs={12} sm={6} lg={3}>
+        <Grid item xs={12} sm={6} lg={isAdmin ? 3 : 4}>
           <StatCard
             title="Active Trips"
             value={activeTrips}
@@ -283,22 +327,24 @@ const DashboardPage = () => {
             trend={8}
           />
         </Grid>
-        <Grid item xs={12} sm={6} lg={3}>
-          <StatCard
-            title="Total Users"
-            value={totalUsers}
-            subtitle="Registered members"
-            icon={People}
-            color="#ed6c02"
-            trend={15}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={3}>
+        {isAdmin && (
+          <Grid item xs={12} sm={6} lg={3}>
+            <StatCard
+              title="Total Users"
+              value={totalUsers}
+              subtitle="Registered members"
+              icon={People}
+              color="#ed6c02"
+              trend={15}
+            />
+          </Grid>
+        )}
+        <Grid item xs={12} sm={6} lg={isAdmin ? 3 : 4}>
           <StatCard
             title="Completed"
             value={completedTrips}
             subtitle="Finished trips"
-            icon={DateRange}
+            icon={isAdmin ? DateRange : CheckCircle}
             color="#9c27b0"
             trend={5}
           />
@@ -311,7 +357,7 @@ const DashboardPage = () => {
           Quick Actions
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={isAdmin ? 3 : 4}>
             <Button
               variant="contained"
               startIcon={<Add />}
@@ -330,47 +376,73 @@ const DashboardPage = () => {
               Create New Trip
             </Button>
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Button
-              variant="outlined"
-              startIcon={<PersonAdd />}
-              component={Link}
-              href="/dashboard/admin/user_management"
-              fullWidth
-              sx={{
-                borderRadius: 2,
-                py: 1.5,
-                fontSize: { xs: "0.875rem", sm: "0.875rem" },
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                color: "primary.main",
-              }}
-            >
-              Manage Users
-            </Button>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Button
-              variant="outlined"
-              startIcon={<TravelExplore />}
-              component={Link}
-              href="/dashboard/admin/trip_management"
-              fullWidth
-              sx={{
-                borderRadius: 2,
-                py: 1.5,
-                fontSize: { xs: "0.875rem", sm: "0.875rem" },
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                color: "primary.main",
-              }}
-            >
-              Manage Trips
-            </Button>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          {isAdmin && (
+            <>
+              <Grid item xs={12} sm={6} md={3}>
+                <Button
+                  variant="outlined"
+                  startIcon={<PersonAdd />}
+                  component={Link}
+                  href="/dashboard/admin/user_management"
+                  fullWidth
+                  sx={{
+                    borderRadius: 2,
+                    py: 1.5,
+                    fontSize: { xs: "0.875rem", sm: "0.875rem" },
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    color: "primary.main",
+                  }}
+                >
+                  Manage Users
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <Button
+                  variant="outlined"
+                  startIcon={<TravelExplore />}
+                  component={Link}
+                  href="/dashboard/admin/trip_management"
+                  fullWidth
+                  sx={{
+                    borderRadius: 2,
+                    py: 1.5,
+                    fontSize: { xs: "0.875rem", sm: "0.875rem" },
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    color: "primary.main",
+                  }}
+                >
+                  Manage Trips
+                </Button>
+              </Grid>
+            </>
+          )}
+          {isUser && (
+            <Grid item xs={12} sm={6} md={4}>
+              <Button
+                variant="outlined"
+                startIcon={<TravelExplore />}
+                component={Link}
+                href="/dashboard/user/travel_post"
+                fullWidth
+                sx={{
+                  borderRadius: 2,
+                  py: 1.5,
+                  fontSize: { xs: "0.875rem", sm: "0.875rem" },
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  color: "primary.main",
+                }}
+              >
+                My Travel Posts
+              </Button>
+            </Grid>
+          )}
+          <Grid item xs={12} sm={6} md={isAdmin ? 3 : 4}>
             <Button
               variant="outlined"
               startIcon={<Visibility />}
@@ -387,7 +459,7 @@ const DashboardPage = () => {
                 color: "primary.main",
               }}
             >
-              View All Trips
+              {isAdmin ? "View All Trips" : "Explore Trips"}
             </Button>
           </Grid>
         </Grid>
@@ -395,7 +467,7 @@ const DashboardPage = () => {
 
       {/* Recent Activities */}
       <Grid container spacing={3}>
-        <Grid item xs={12} lg={6}>
+        <Grid item xs={12} lg={isAdmin ? 6 : 12}>
           <Paper sx={{ p: 3, height: "fit-content" }}>
             <Stack
               direction="row"
@@ -404,13 +476,13 @@ const DashboardPage = () => {
               sx={{ mb: 2 }}
             >
               <Typography variant="h6" fontWeight={600}>
-                Recent Trips
+                {isAdmin ? "Recent Trips" : "My Recent Trips"}
               </Typography>
               <Button
                 variant="text"
                 size="small"
                 component={Link}
-                href="/travel"
+                href={isAdmin ? "/travel" : "/dashboard/user/travel_post"}
                 endIcon={<Visibility />}
               >
                 View All
@@ -429,62 +501,66 @@ const DashboardPage = () => {
                   textAlign="center"
                   py={3}
                 >
-                  No trips available
+                  {isAdmin
+                    ? "No trips available"
+                    : "You haven't created any trips yet"}
                 </Typography>
               )}
             </List>
           </Paper>
         </Grid>
 
-        <Grid item xs={12} lg={6}>
-          <Paper sx={{ p: 3, height: "fit-content" }}>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              sx={{ mb: 2 }}
-            >
-              <Typography variant="h6" fontWeight={600}>
-                Recent Users
-              </Typography>
-              <Button
-                variant="text"
-                size="small"
-                component={Link}
-                href="/dashboard/admin/user_management"
-                endIcon={<People />}
+        {isAdmin && (
+          <Grid item xs={12} lg={6}>
+            <Paper sx={{ p: 3, height: "fit-content" }}>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                sx={{ mb: 2 }}
               >
-                Manage
-              </Button>
-            </Stack>
-            <Divider sx={{ mb: 2 }} />
-            <List sx={{ p: 0 }}>
-              {recentUsers.length > 0 ? (
-                recentUsers.map((user: User, index: number) => (
-                  <UserItem key={user.id || index} user={user} />
-                ))
-              ) : (
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  textAlign="center"
-                  py={3}
-                >
-                  No users available
+                <Typography variant="h6" fontWeight={600}>
+                  Recent Users
                 </Typography>
-              )}
-            </List>
-          </Paper>
-        </Grid>
+                <Button
+                  variant="text"
+                  size="small"
+                  component={Link}
+                  href="/dashboard/admin/user_management"
+                  endIcon={<People />}
+                >
+                  Manage
+                </Button>
+              </Stack>
+              <Divider sx={{ mb: 2 }} />
+              <List sx={{ p: 0 }}>
+                {recentUsers.length > 0 ? (
+                  recentUsers.map((user: User, index: number) => (
+                    <UserItem key={user.id || index} user={user} />
+                  ))
+                ) : (
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    textAlign="center"
+                    py={3}
+                  >
+                    No users available
+                  </Typography>
+                )}
+              </List>
+            </Paper>
+          </Grid>
+        )}
       </Grid>
 
       {/* Progress Section */}
       <Paper sx={{ p: 3, mt: 3 }}>
         <Typography variant="h6" gutterBottom fontWeight={600}>
-          Platform Growth
+          {isAdmin ? "Platform Growth" : "Your Progress"}
         </Typography>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={isAdmin ? 4 : 6}>
             <Box>
               <Stack
                 direction="row"
@@ -509,7 +585,38 @@ const DashboardPage = () => {
               />
             </Box>
           </Grid>
-          <Grid item xs={12} md={4}>
+          {isAdmin && (
+            <Grid item xs={12} md={4}>
+              <Box>
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  sx={{ mb: 1 }}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    Active Users
+                  </Typography>
+                  <Typography variant="body2" fontWeight={600}>
+                    {users.filter((u: User) => u.isActive).length}/{totalUsers}
+                  </Typography>
+                </Stack>
+                <LinearProgress
+                  variant="determinate"
+                  value={
+                    totalUsers > 0
+                      ? (users.filter((u: User) => u.isActive).length /
+                          totalUsers) *
+                        100
+                      : 0
+                  }
+                  sx={{ height: 8, borderRadius: 4, bgcolor: "grey.200" }}
+                  color="success"
+                />
+              </Box>
+            </Grid>
+          )}
+          <Grid item xs={12} md={isAdmin ? 4 : 6}>
             <Box>
               <Stack
                 direction="row"
@@ -518,36 +625,7 @@ const DashboardPage = () => {
                 sx={{ mb: 1 }}
               >
                 <Typography variant="body2" color="text.secondary">
-                  Active Users
-                </Typography>
-                <Typography variant="body2" fontWeight={600}>
-                  {users.filter((u: User) => u.isActive).length}/{totalUsers}
-                </Typography>
-              </Stack>
-              <LinearProgress
-                variant="determinate"
-                value={
-                  totalUsers > 0
-                    ? (users.filter((u: User) => u.isActive).length /
-                        totalUsers) *
-                      100
-                    : 0
-                }
-                sx={{ height: 8, borderRadius: 4, bgcolor: "grey.200" }}
-                color="success"
-              />
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Box>
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-                sx={{ mb: 1 }}
-              >
-                <Typography variant="body2" color="text.secondary">
-                  Current Month Activity
+                  {isAdmin ? "Current Month Activity" : "Active vs Total"}
                 </Typography>
                 <Typography variant="body2" fontWeight={600}>
                   {activeTrips}/{totalTrips}
