@@ -31,7 +31,7 @@ const ChangePassword = () => {
 
          if ('data' in res && res.data.status === 200) {
             toast.success('Password Changed Successfully');
-            removeUser();
+            await removeUser();
             router.push('/login');
             router.refresh();
          } else {

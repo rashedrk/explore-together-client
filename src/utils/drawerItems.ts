@@ -5,7 +5,7 @@ import { USER_ROLE } from '@/constants/role';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
-import { Add } from '@mui/icons-material';
+import { Add, History } from '@mui/icons-material';
 
 
 export const drawerItems = (role: UserRole): DrawerItem[] => {
@@ -42,7 +42,19 @@ export const drawerItems = (role: UserRole): DrawerItem[] => {
          );
          break;
       case USER_ROLE.USER:
-         roleMenus.push(...sharedItems);
+         roleMenus.push(
+            ...sharedItems,
+            {
+               title: 'Travel Posts',
+               path: `${role}/travel_post`,
+               icon: TravelExploreIcon,
+            },
+            {
+               title: 'Request History',
+               path: `${role}/request_history`,
+               icon: History,
+            },
+         );
          break;
 
       default:

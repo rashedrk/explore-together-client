@@ -24,7 +24,6 @@ import Link from "next/link";
 
 import SideBar from "../Sidebar/Sidebar";
 import { getUserInfo, removeUser } from "@/services/auth.services";
-import { clearAuthCookie } from "@/services/actions/logoutUser";
 import { useRouter } from "next/navigation";
 import { Home } from "@mui/icons-material";
 
@@ -75,9 +74,7 @@ export default function DashboardDrawer({
 
   const handleLogout = async () => {
     // Clear localStorage
-    removeUser();
-    // Clear cookie
-    await clearAuthCookie();
+    await removeUser();
     // Update state
     setUserData(null);
     // Refresh the page
@@ -306,7 +303,7 @@ export default function DashboardDrawer({
             },
           }}
         >
-          <SideBar />
+          <SideBar role={userData?.role} />
         </Drawer>
         <Drawer
           variant="permanent"
@@ -319,7 +316,7 @@ export default function DashboardDrawer({
           }}
           open
         >
-          <SideBar />
+          <SideBar role={userData?.role}/>
         </Drawer>
       </Box>
       <Box

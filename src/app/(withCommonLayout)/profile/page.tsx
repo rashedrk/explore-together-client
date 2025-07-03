@@ -15,8 +15,6 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { FieldValues } from "react-hook-form";
-import TravelRequestHistory from "./components/TravelRequestHistory/TravelRequestHistory";
-import TravelPosts from "./components/TravelPosts/TravelPosts";
 
 const ProfilePage = () => {
   const { data: profile, isLoading } = useGetProfileQuery(undefined);
@@ -76,18 +74,6 @@ const ProfilePage = () => {
             </CSForm>
           </Box>
         )}
-      </Box>
-      <Box sx={{ my: 3 }}>
-        <Typography variant="h5" mb={1}>
-          Travel Request History
-        </Typography>
-        <TravelRequestHistory />
-      </Box>
-      <Box sx={{ my: 3 }}>
-        <Typography variant="h5" mb={1}>
-          Travel Request History
-        </Typography>
-        <TravelPosts />
       </Box>
     </Container>
   );

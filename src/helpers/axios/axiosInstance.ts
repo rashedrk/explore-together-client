@@ -2,61 +2,85 @@
 import { authKey } from "@/constants/authkey";
 import { removeUser } from "@/services/auth.services";
 import { IGenericErrorResponse, ResponseSuccessType } from "@/types/common";
-import { getFromLocalStorage, setToLocalStorage } from "@/utils/local-storage";
+import { getFromLocalStorage } from "@/utils/local-storage";
+import axios, { AxiosResponse, AxiosError, InternalAxiosRequestConfig } from "axios";
 
-import axios from "axios";
+// Define interface for API error response
+interface ApiErrorResponse {
+  message?: string;
+  errorMessages?: Array<{ path: string; message: string }>;
+  statusCode?: number;
+}
 
-const axiosInstance = axios.create();
-axiosInstance.defaults.headers.post["Content-Type"] = "application/json";
-axiosInstance.defaults.headers["Accept"] = "application/json";
-axiosInstance.defaults.timeout = 60000;
+// Create axios instance with default configuration
+const axiosInstance = axios.create({
+  timeout: 60000,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
+});
 
-// Add a request interceptor
+// Request interceptor to add authentication token
 axiosInstance.interceptors.request.use(
-  function (config) {
-    // Do something before request is sent
+  (config: InternalAxiosRequestConfig) => {
     const accessToken = getFromLocalStorage(authKey);
-  
-    
 
     if (accessToken) {
-      config.headers.Authorization = accessToken;
+      config.headers.Authorization = `${accessToken}`;
     }
+
     return config;
   },
-  function (error) {
-    // Do something with request error
+  (error: AxiosError) => {
     return Promise.reject(error);
   }
 );
 
-// Add a response interceptor
+// Response interceptor for handling responses and errors
 axiosInstance.interceptors.response.use(
-  //@ts-ignore
-  function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
-    // const responseObject: ResponseSuccessType = {
-    //   data: response?.data?.data,
-    //   meta: response?.data?.meta,
-    // };
+  (response: AxiosResponse): AxiosResponse => {
+    // Return the response data structure as expected
     return response;
   },
-  async function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+  async (error: AxiosError<ApiErrorResponse>) => {
+    const originalRequest = error.config;
+    const status = error.response?.status;
+    const errorData = error.response?.data;
 
-    if (error?.response?.status === 500) {
-      return removeUser();
-    } else {
-      const responseObject: IGenericErrorResponse = {
-        statusCode: error?.response?.data?.statusCode || 500,
-        message: error?.response?.data?.message || "Something went wrong!!!",
-        errorMessages: error?.response?.data?.message,
-      };
-      // return Promise.reject(error);
-      return responseObject;
+    // Handle different error status codes
+    if (status === 401) {
+      // Unauthorized - clear user data and redirect to login
+      await removeUser();
+      // Redirect to login page
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
+      return Promise.reject(error);
     }
+
+    if (status === 403) {
+      // Forbidden - user doesn't have permission
+      console.error('Access forbidden');
+    }
+
+    // For server errors (500)
+    if (status && status >= 500) {
+      console.error('Server error:', errorData?.message || 'Internal server error');
+    }
+
+    // Create standardized error response
+    const errorResponse: IGenericErrorResponse = {
+      statusCode: status || 500,
+      message: errorData?.message || error.message || "Something went wrong!",
+      errorMessages: errorData?.errorMessages || [{
+        path: '',
+        message: errorData?.message || error.message || "Something went wrong!"
+      }],
+    };
+
+    // Reject with the standardized error format
+    return Promise.reject(errorResponse);
   }
 );
 

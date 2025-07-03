@@ -1,3 +1,4 @@
+"use client";
 import Loader from "@/components/shared/Loader/Loader";
 import {
   useMyTripPostsQuery,
@@ -10,7 +11,7 @@ import Image from "next/image";
 import { useState } from "react";
 import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import EditTravelPostModal from "../EditTravelPostModal/EditTravelPostModal";
+import EditTravelPostModal from "@/components/Modals/EditTravelPostModal/EditTravelPostModal";
 
 const TravelPosts = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -91,7 +92,11 @@ const TravelPosts = () => {
 
   return (
     <>
-    <EditTravelPostModal trip={selectedTrip} open={isModalOpen} setOpen={setIsModalOpen}/>
+      <EditTravelPostModal
+        trip={selectedTrip}
+        open={isModalOpen}
+        setOpen={setIsModalOpen}
+      />
       {isLoading ? (
         <Loader />
       ) : (

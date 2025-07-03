@@ -79,11 +79,7 @@ function Navbar() {
   ];
 
   const handleLogout = async () => {
-    // Clear localStorage
-    removeUser();
-    // Clear cookie
-    await clearAuthCookie();
-    // Update state
+    await removeUser();
     setUserData(null);
     // Refresh the page
     router.refresh();

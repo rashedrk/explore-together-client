@@ -9,6 +9,7 @@ const AuthRoutes = ['/login', '/register'];
 const commonPrivateRoutes = ['/dashboard', '/dashboard/change-password', '/dashboard/post_trip', '/travel_request', '/profile'];
 const roleBasedPrivateRoutes = {
    admin: [/^\/dashboard\/admin\/?.*/],
+   user: [/^\/dashboard\/user\/?.*/],
 };
 
 export function middleware(request: NextRequest) {
@@ -35,6 +36,7 @@ export function middleware(request: NextRequest) {
    }
 
    const role = decodedData?.role;
+console.log(role);
 
 
    if (role && roleBasedPrivateRoutes[role as Role]) {
@@ -44,6 +46,7 @@ export function middleware(request: NextRequest) {
          return NextResponse.next();
       }
    }
+
 
    return NextResponse.redirect(new URL('/', request.url));
 }

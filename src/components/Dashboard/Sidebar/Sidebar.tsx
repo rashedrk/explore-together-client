@@ -2,20 +2,12 @@ import { Box, List, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 
-import { getUserInfo } from "@/services/auth.services";
-import { useEffect, useState } from "react";
-import logo from "@/assets/search.png"
+import logo from "@/assets/search.png";
 import { UserRole } from "@/types/common";
 import SidebarItem from "./SidebarItem";
 import { drawerItems } from "@/utils/drawerItems";
 
-const SideBar = () => {
-  const [userRole, setUserRole] = useState("admin");
-
-//   useEffect(() => {
-//     const { role } = getUserInfo() as any;
-//     setUserRole(role);
-//   }, []);
+const SideBar = ({role}:{role:string}) => {
 
   return (
     <Box>
@@ -39,11 +31,14 @@ const SideBar = () => {
             cursor: "pointer",
           }}
         >
-          Explore <Box component="span" sx={{color: "primary.main"}}>Together</Box>
+          Explore{" "}
+          <Box component="span" sx={{ color: "primary.main" }}>
+            Together
+          </Box>
         </Typography>
       </Stack>
       <List>
-        {drawerItems(userRole as UserRole).map((item, index) => (
+        {drawerItems(role as UserRole).map((item, index) => (
           <SidebarItem key={index} item={item} />
         ))}
       </List>

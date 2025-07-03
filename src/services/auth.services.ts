@@ -7,6 +7,7 @@ import {
   removeFromLocalStorage,
   setToLocalStorage,
 } from "@/utils/local-storage";
+import { clearAuthCookie } from "./actions/logoutUser";
 
 export const storeUserInfo = ({ accessToken }: { accessToken: string }) => {
   //   console.log(accessToken);
@@ -32,6 +33,8 @@ export const isLoggedIn = () => {
   }
 };
 
-export const removeUser = () => {
+export const removeUser = async () => {
+  // Clear cookie
+  await clearAuthCookie();
   return removeFromLocalStorage(authKey);
 };
