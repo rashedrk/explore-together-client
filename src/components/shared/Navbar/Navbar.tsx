@@ -67,15 +67,7 @@ function Navbar() {
     {
       name: "About Us",
       route: "/about",
-    },
-    ...(isClient && userData
-      ? [
-          {
-            name: "My Profile",
-            route: "/profile",
-          },
-        ]
-      : []),
+    }
   ];
 
   const handleLogout = async () => {
