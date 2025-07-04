@@ -22,6 +22,7 @@ const CSInput = ({
   fullWidth,
   sx,
   required,
+  placeholder,
   multiline = false,
   disabled = false,
 }: TInputProps) => {
@@ -39,7 +40,7 @@ const CSInput = ({
           variant="outlined"
           size={size}
           fullWidth={fullWidth}
-          placeholder={label}
+          placeholder={placeholder}
           required={required}
           multiline={multiline}
           rows={multiline ? 4 : 1}
