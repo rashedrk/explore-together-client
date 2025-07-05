@@ -1,4 +1,4 @@
-import { SxProps, TextField } from "@mui/material";
+import { SxProps, TextField, InputProps } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
 
 type TInputProps = {
@@ -12,6 +12,7 @@ type TInputProps = {
   required?: boolean;
   multiline?: boolean;
   disabled?: boolean;
+  InputProps?: Partial<InputProps>;
 };
 
 const CSInput = ({
@@ -25,6 +26,7 @@ const CSInput = ({
   placeholder,
   multiline = false,
   disabled = false,
+  InputProps,
 }: TInputProps) => {
   const { control } = useFormContext();
   return (
@@ -47,6 +49,7 @@ const CSInput = ({
           disabled={disabled}
           error={!!error?.message}
           helperText={error ? error.message : ""}
+          InputProps={InputProps}
         />
       )}
     />

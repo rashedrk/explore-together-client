@@ -40,8 +40,9 @@ const DemoLoginModal = ({handleLogin} : any) => {
       <Button
         variant="outlined"
         onClick={handleClickOpen}
+        fullWidth
         sx={{
-          color: "#0096FF",
+          color: "#1CA8CB",
           marginTop: 1,
         }}
       >
