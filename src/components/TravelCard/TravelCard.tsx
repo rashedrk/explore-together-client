@@ -16,11 +16,11 @@ const TravelCard = ({ trip }: any) => {
   // Calculate duration in days
   const duration = dayjs(trip?.endDate).diff(dayjs(trip?.startDate), "d");
 
-  // Mock data for enhanced features (you can replace these with actual data from your trip object)
+
   const rating = trip.rating || 5;
   const reviewCount = trip.reviewCount || 3;
-  const price = trip.price || 180;
-  const originalPrice = trip.originalPrice || price + 20;
+  const price = trip.budget || 180;
+  const originalPrice = trip.budget || price + 20;
   const discount = trip.discount || null;
   const hasDiscount = discount && discount > 0;
 

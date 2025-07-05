@@ -12,8 +12,6 @@ import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
 
 const PostTripPage = () => {
- 
-
   const handleSubmit = async (values: FieldValues) => {
     const toastId = toast.loading("Processing! Please wait....");
     const fileArray = [
@@ -51,24 +49,30 @@ const PostTripPage = () => {
       // console.log(uploadedPhotos);
 
       const tripData = {
+        title: values.title,
         destination: values.destination,
         startDate: values.startDate,
         endDate: values.endDate,
         budget: Number(values.budget),
-        activities: values.activities.split(",").map((activity: string) => activity.trim()),
+        activities: values.activities
+          .split(",")
+          .map((activity: string) => activity.trim()),
         photos: uploadedPhotos,
         description: values.description,
         type: values.type,
-      }
+      };
 
       const res = await postTrip(tripData);
       if (res?.statusCode === 201) {
-        toast.success(res?.message, {id: toastId});
+        toast.success(res?.message, { id: toastId });
+        // Form will be reset automatically on success
       } else {
-        toast.error(res.message, {id: toastId});
+        toast.error(res.message, { id: toastId });
+        throw new Error(res.message);
       }
     } catch (error: any) {
-      toast.error(error.message, {id: toastId});
+      toast.error(error.message, { id: toastId });
+      throw error; // Re-throw to prevent form reset
     }
   };
   return (
@@ -77,16 +81,30 @@ const PostTripPage = () => {
         my: 2,
       }}
     >
-      <CSForm onSubmit={handleSubmit}>
-        <CSFileUploader sx={{
-          my: 2
-        }} name="photo" />
-        <Typography variant="caption" sx={{
-          ml:2
-        }}>
+      <CSForm onSubmit={handleSubmit} resetOnSuccess={true}>
+        <CSFileUploader
+          sx={{
+            my: 2,
+          }}
+          name="photo"
+        />
+        <Typography
+          variant="caption"
+          sx={{
+            ml: 2,
+          }}
+        >
           Please select 4 images at once
         </Typography>
         <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <CSInput
+              name="title"
+              label="Trip Title"
+              type="text"
+              fullWidth={true}
+            />
+          </Grid>
           <Grid item xs={4}>
             <CSInput
               name="destination"
@@ -129,7 +147,7 @@ const PostTripPage = () => {
               fullWidth={true}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={12}>
             <CSInput
               name="description"
               label="Description"
