@@ -4,42 +4,30 @@ import {
   Button,
   Container,
   Grid,
-  Stack,
-  TextField,
   Typography,
   Paper,
   IconButton,
   InputAdornment,
   Divider,
-  alpha,
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  useForm,
-  SubmitHandler,
-  FieldValues,
-  useFormContext,
-} from "react-hook-form";
+import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { userLogin } from "@/services/actions/userLogin";
 import { storeUserInfo } from "@/services/auth.services";
 import CSForm from "@/components/Forms/CSForm";
 import CSInput from "@/components/Forms/CSInput";
+import CSSelect from "@/components/Forms/CSSelect";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import logo from "@/assets/search.png";
 import { registerUser } from "@/services/actions/registerUser";
-import {
-  Visibility,
-  VisibilityOff,
-  Person,
-  Email,
-  Lock,
-} from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useState } from "react";
 import bgImage from "@/assets/bg.jpg";
+import { COUNTRIES } from "@/constants/country";
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -52,6 +40,12 @@ const RegisterPage = () => {
       firstName: z.string().min(1, "Please enter your first name!"),
       lastName: z.string().min(1, "Please enter your last name!"),
       email: z.string().email("Please enter a valid email address!"),
+      gender: z.string().min(1, "Please select your gender!"),
+      streetAddress: z.string().min(1, "Please enter your street address!"),
+      city: z.string().min(1, "Please enter your city!"),
+      state: z.string().min(1, "Please enter your state/province!"),
+      zipCode: z.string().min(1, "Please enter your ZIP/postal code!"),
+      country: z.string().min(1, "Please select your country!"),
       confirmPassword: z
         .string()
         .min(6, { message: "Password must be at least 6 characters" }),
@@ -66,6 +60,12 @@ const RegisterPage = () => {
     firstName: "",
     lastName: "",
     email: "",
+    gender: "",
+    streetAddress: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    country: "",
     confirmPassword: "",
   };
 
@@ -73,7 +73,7 @@ const RegisterPage = () => {
     // Combine firstName and lastName into name for API
     const registrationData = {
       ...values,
-      name: `${values.firstName} ${values.lastName}`,
+      address: `${values.streetAddress}, ${values.city}, ${values.state}, ${values.zipCode}, ${values.country}`,
     };
 
     try {
@@ -91,6 +91,7 @@ const RegisterPage = () => {
       }
     } catch (err: any) {
       console.error(err.message);
+      toast.error(err?.response?.data?.message || "Something went wrong!");
     }
   };
 
@@ -123,7 +124,7 @@ const RegisterPage = () => {
         },
       }}
     >
-      <Container maxWidth="sm" sx={{ position: "relative", zIndex: 1 }}>
+      <Container maxWidth="md" sx={{ position: "relative", zIndex: 1 }}>
         <Paper
           elevation={24}
           sx={{
@@ -174,6 +175,21 @@ const RegisterPage = () => {
               defaultValues={defaultValues}
             >
               <Grid container spacing={3}>
+                {/* Personal Information Section */}
+                <Grid item xs={12}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      color: "#1CA8CB",
+                      fontWeight: 600,
+                      mb: 1,
+                      fontSize: "1.1rem",
+                    }}
+                  >
+                    Personal Information
+                  </Typography>
+                </Grid>
+
                 <Grid item xs={12} sm={6}>
                   <CSInput
                     label="First Name"
@@ -238,6 +254,171 @@ const RegisterPage = () => {
                     }}
                   />
                 </Grid>
+                <Grid item xs={12}>
+                  <CSSelect
+                    label="Gender"
+                    name="gender"
+                    fullWidth={true}
+                    items={["Male", "Female", "Other", "Prefer not to say"]}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: 2,
+                        "& fieldset": {
+                          borderColor: "#e0e0e0",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#1CA8CB",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#1CA8CB",
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+
+                {/* Address Section */}
+                <Grid item xs={12}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      color: "#1CA8CB",
+                      fontWeight: 600,
+                      mt: 2,
+                      mb: 1,
+                      fontSize: "1.1rem",
+                    }}
+                  >
+                    Address Information
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <CSInput
+                    label="Street Address"
+                    fullWidth={true}
+                    name="streetAddress"
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: 2,
+                        "& fieldset": {
+                          borderColor: "#e0e0e0",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#1CA8CB",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#1CA8CB",
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <CSInput
+                    label="City"
+                    fullWidth={true}
+                    name="city"
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: 2,
+                        "& fieldset": {
+                          borderColor: "#e0e0e0",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#1CA8CB",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#1CA8CB",
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <CSInput
+                    label="State/Province"
+                    fullWidth={true}
+                    name="state"
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: 2,
+                        "& fieldset": {
+                          borderColor: "#e0e0e0",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#1CA8CB",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#1CA8CB",
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <CSInput
+                    label="ZIP/Postal Code"
+                    fullWidth={true}
+                    name="zipCode"
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: 2,
+                        "& fieldset": {
+                          borderColor: "#e0e0e0",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#1CA8CB",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#1CA8CB",
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <CSSelect
+                    label="Country"
+                    name="country"
+                    fullWidth={true}
+                    items={COUNTRIES}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: 2,
+                        "& fieldset": {
+                          borderColor: "#e0e0e0",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#1CA8CB",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#1CA8CB",
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+                {/* Password Section */}
+                <Grid item xs={12}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      color: "#1CA8CB",
+                      fontWeight: 600,
+                      mt: 2,
+                      mb: 1,
+                      fontSize: "1.1rem",
+                    }}
+                  >
+                    Security Information
+                  </Typography>
+                </Grid>
+
                 <Grid item xs={12} sm={6}>
                   <CSInput
                     label="Password"
