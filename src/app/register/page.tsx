@@ -40,6 +40,7 @@ const RegisterPage = () => {
       firstName: z.string().min(1, "Please enter your first name!"),
       lastName: z.string().min(1, "Please enter your last name!"),
       email: z.string().email("Please enter a valid email address!"),
+      phoneNumber: z.string().min(10, "Please enter a valid phone number!"),
       gender: z.string().min(1, "Please select your gender!"),
       streetAddress: z.string().min(1, "Please enter your street address!"),
       city: z.string().min(1, "Please enter your city!"),
@@ -60,6 +61,7 @@ const RegisterPage = () => {
     firstName: "",
     lastName: "",
     email: "",
+    phoneNumber: "",
     gender: "",
     streetAddress: "",
     city: "",
@@ -72,7 +74,12 @@ const RegisterPage = () => {
   const handleRegister = async (values: FieldValues) => {
     // Combine firstName and lastName into name for API
     const registrationData = {
-      ...values,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      phone: values.phoneNumber,
+      gender: values.gender,
+      password: values.password,
       address: `${values.streetAddress}, ${values.city}, ${values.state}, ${values.zipCode}, ${values.country}`,
     };
 
@@ -254,12 +261,35 @@ const RegisterPage = () => {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6}>
+                  <CSInput
+                    label="Phone Number"
+                    type="tel"
+                    fullWidth={true}
+                    name="phoneNumber"
+                    placeholder="e.g., +1 (555) 123-4567"
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: 2,
+                        "& fieldset": {
+                          borderColor: "#e0e0e0",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#1CA8CB",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#1CA8CB",
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
                   <CSSelect
                     label="Gender"
                     name="gender"
                     fullWidth={true}
-                    items={["Male", "Female", "Other", "Prefer not to say"]}
+                    items={["male", "female"]}
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         borderRadius: 2,
